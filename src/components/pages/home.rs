@@ -41,9 +41,12 @@ pub fn form(props: &Props) -> Html {
         event.prevent_default();
         form_onsubmit.emit(state.to_string());
     });
+    let handle_onchange = Callback::from(move |text: String|{
+
+    });
     html! {
         <form onsubmit={onsubmit}>
-            <TextInput name="username" handle_onchange={}/>
+            <TextInput name="username" handle_onchange={handle_onchange}/>
         </form>
     }
 }
