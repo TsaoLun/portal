@@ -13,3 +13,4 @@ stylist = { version = "0.12.0", features = ["yew"] }
 web-sys = "0.3.60"
 yew = { version = "0.20.0", features = ["csr"] }
 yew-router = "0.17.0"
+yewdux = "0.9.0"

@@ -1,52 +1,36 @@
+use crate::{components::elements::text_input::*, store::BoardStore};
 use std::ops::Deref;
+use gloo::console::*;
+use web_sys::HtmlInputElement;
 use yew::prelude::*;
-use crate::components::elements::{text_input::*};
-
-#[derive(Clone)]
-struct HomeData {
-    data: String,
-    is_login: bool    
-}
-
-impl Default for HomeData {
-    fn default() -> Self {
-        HomeData { data: "".to_string(), is_login: false }
-    }
-}
-
-#[derive(Properties, PartialEq)]
-pub struct Props {
-    pub onsubmit: Callback<String>
-}
+use yewdux::{prelude::*, dispatch};
 
 #[function_component(Home)]
 pub fn home() -> Html {
-    let home_data = use_state(HomeData::default);
-    let portal_data = {
-        Callback::from(move |data: String| {
-            let v = home_data.deref().clone();
-            home_data.set(HomeData { data, ..v });
-        })
-    };
     html! {
-        <Form onsubmit={portal_data}/>
+        <Form />
     }
 }
 
 #[function_component(Form)]
-pub fn form(props: &Props) -> Html {
-    let state = use_state(|| "");
-    let form_onsubmit = props.onsubmit.clone();
-    let onsubmit = Callback::from(move |event: SubmitEvent| {
+pub fn form() -> Html {
+    let (store, dispatch) = use_store::<BoardStore>();
+    let onsubmit = dispatch.reduce_mut_callback_with(|state, event: SubmitEvent| {
         event.prevent_default();
-        form_onsubmit.emit(state.to_string());
+        state.data = event.target_unchecked_into::<HtmlInputElement>().value();
+        log!("x")
     });
-    let handle_onchange = Callback::from(move |text: String|{
-
+    let handle_onchange = Callback::from(move |text: String| {
+        log!(text);
+        text
     });
     html! {
         <form onsubmit={onsubmit}>
-            <TextInput name="username" handle_onchange={handle_onchange}/>
+            <h1>{&store.data}</h1>
+            <TextInput name="copy" handle_onchange={handle_onchange}/>
+            <div>
+                <button>{"Copy"}</button>
+            </div>
         </form>
     }
 }
