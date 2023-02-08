@@ -5,7 +5,7 @@ use yew::prelude::*;
 pub struct Props {
     pub name: String,
     pub onchange: Callback<Event>,
-    pub oninput: Callback<InputEvent>,
+    pub oninput: Option<Callback<InputEvent>>,
 }
 
 #[styled_component(TextInput)]
@@ -27,9 +27,18 @@ pub fn text_input(props: &Props) -> Html {
             }
         "#
     ).unwrap();
-    html! {
-        <div class={stylesheet}>
-            <input type="text" name={props.name.clone()} onchange={onchange} oninput={oninput} placeholder={props.name.clone()} autocomplete="off"/>
-        </div>
+    if let Some(oninput) = oninput {
+        html! {
+            <div class={stylesheet}>
+                <input type="text" name={props.name.clone()} onchange={onchange} oninput={oninput} placeholder={props.name.clone()} autocomplete="off"/>
+            </div>
+        }
+    } else {
+        html! {
+            <div class={stylesheet}>
+                <input type="text" name={props.name.clone()} onchange={onchange} placeholder={props.name.clone()} autocomplete="off"/>
+            </div>
+        }
     }
+    
 }

@@ -31,7 +31,7 @@ pub fn form() -> Html {
         let state = state.clone();
         dispatch.reduce_mut_callback_with(move |store, event: Event| {
             store.inner_data = event.target_unchecked_into::<HtmlInputElement>().value();
-            state.set("请提交");
+            state.set("请记得提交");
         })
     };
     let handle_input = {
