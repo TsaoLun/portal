@@ -1,2 +1,2 @@
-pub mod home;
+pub mod data;
 pub mod login;

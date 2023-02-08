@@ -1,5 +1,5 @@
 use crate::{
-    components::elements::submit_button::*, components::elements::text_input::*, store::BoardStore,
+    components::elements::submit_button::*, components::elements::{text_input::*, copy_button::CopyButton}, store::BoardStore,
 };
 use gloo::console::*;
 use std::ops::Deref;
@@ -8,8 +8,8 @@ use web_sys::{Element, HtmlInputElement};
 use yew::prelude::*;
 use yewdux::{dispatch, prelude::*};
 
-#[function_component(Home)]
-pub fn home() -> Html {
+#[function_component(Data)]
+pub fn data() -> Html {
     html! {
         <Form />
     }
@@ -22,16 +22,17 @@ pub fn form() -> Html {
     let onsubmit = {
         let state = state.clone();
         dispatch.reduce_mut_callback_with(move |store, event: SubmitEvent| {
-        event.prevent_default();
-        store.submit_data = store.inner_data.clone();
-        state.set("感谢您的提交 ^ ^");
-    })};
+            event.prevent_default();
+            store.submit_data = store.inner_data.clone();
+            state.set("感谢您的提交 ^ ^");
+        })
+    };
 
     let handle_onchange = {
         let state = state.clone();
         dispatch.reduce_mut_callback_with(move |store, event: Event| {
             store.inner_data = event.target_unchecked_into::<HtmlInputElement>().value();
-            state.set("请记得提交");
+            state.set("请记得提交~");
         })
     };
     let handle_input = {
@@ -47,12 +48,26 @@ pub fn form() -> Html {
     "#
     )
     .unwrap();
+    let copysheet = style!(
+        r#"
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        button {
+            margin-left: 10px;
+        }
+    "#
+    )
+    .unwrap();
     html! {
         <div class={stylesheet}>
             <ContextProvider<String> context={state.deref().clone()}>
                 <form onsubmit={onsubmit}>
                     <h1>{state.deref()}</h1>
-                    <TextInput name="submit" onchange={handle_onchange} oninput={handle_input}/>
+                    <div class={copysheet}>
+                        <TextInput name="submit" onchange={handle_onchange} oninput={handle_input}/>
+                        <CopyButton name="C" />
+                    </div>
                     <SubmitButton name="Submit" />
                 </form>
                 <h1>{&_store.submit_data}</h1>

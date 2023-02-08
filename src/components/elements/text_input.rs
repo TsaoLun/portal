@@ -1,4 +1,4 @@
-use stylist::{yew::styled_component, style};
+use stylist::{style, yew::styled_component};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -11,7 +11,6 @@ pub struct Props {
 #[styled_component(TextInput)]
 pub fn text_input(props: &Props) -> Html {
     let onchange = &props.onchange;
-    let oninput = &props.oninput;
     let stylesheet = style!(
         r#"
             margin-bottom: 10px;
@@ -26,19 +25,18 @@ pub fn text_input(props: &Props) -> Html {
                 border: 2px solid black;
             }
         "#
-    ).unwrap();
-    if let Some(oninput) = oninput {
-        html! {
-            <div class={stylesheet}>
-                <input type="text" name={props.name.clone()} onchange={onchange} oninput={oninput} placeholder={props.name.clone()} autocomplete="off"/>
-            </div>
+    )
+    .unwrap();
+    let input = {
+        if let Some(oninput) = &props.oninput {
+            html! {
+                    <input type="text" name={props.name.clone()} onchange={onchange} oninput={oninput} placeholder={props.name.clone()} autocomplete="off"/>
+            }
+        } else {
+            html! {
+                    <input type="text" name={props.name.clone()} onchange={onchange} placeholder={props.name.clone()} autocomplete="off"/>
+            }
         }
-    } else {
-        html! {
-            <div class={stylesheet}>
-                <input type="text" name={props.name.clone()} onchange={onchange} placeholder={props.name.clone()} autocomplete="off"/>
-            </div>
-        }
-    }
-    
+    };
+    html! {<div class={stylesheet}>{input}</div>}
 }

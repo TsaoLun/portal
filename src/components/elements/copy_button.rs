@@ -6,17 +6,17 @@ pub struct Props {
     pub name: String,
 }
 
-#[styled_component(SubmitButton)]
-pub fn submit_button(props: &Props) -> Html {
+#[styled_component(CopyButton)]
+pub fn copy_button(props: &Props) -> Html {
     let stylesheet = style!(
         r#"
             margin-top: 12px;
             margin-bottom: 12px;
             text-align: center;
             button {
-                width: 80px;
+                width: 40px;
                 height: 40px;
-                font-size: medium;
+                font-size: small;
                 border-radius: 0px;
             }
         "#
