@@ -1,10 +1,12 @@
 use crate::{
-    components::elements::submit_button::*, components::elements::{text_input::*, copy_button::CopyButton}, store::BoardStore,
+    components::elements::submit_button::*,
+    components::elements::{copy_button::CopyButton, text_input::*},
+    store::BoardStore,
 };
-use gloo::console::*;
 use std::ops::Deref;
+use gloo::{console::log, utils::{document_element, document}};
 use stylist::{style, yew::styled_component};
-use web_sys::{Element, HtmlInputElement};
+use web_sys::{HtmlInputElement, Docu, HtmlElement};
 use yew::prelude::*;
 use yewdux::{dispatch, prelude::*};
 
@@ -27,6 +29,13 @@ pub fn form() -> Html {
             state.set("感谢您的提交 ^ ^");
         })
     };
+    //let d = HtmlDocument
+    let handle_onclick = Callback::from(|e: MouseEvent| {
+        e.stop_propagation();
+        let x = document();
+        let y = x.create_element_with_str("textarea", "123").unwrap();
+        //create
+    });
 
     let handle_onchange = {
         let state = state.clone();
@@ -66,7 +75,9 @@ pub fn form() -> Html {
                     <h1>{state.deref()}</h1>
                     <div class={copysheet}>
                         <TextInput name="submit" onchange={handle_onchange} oninput={handle_input}/>
-                        <CopyButton name="C" />
+                        <span onclick={handle_onclick}>
+                            <CopyButton name="C" />
+                        </span>
                     </div>
                     <SubmitButton name="Submit" />
                 </form>

@@ -1,6 +1,6 @@
-use stylist::{yew::styled_component, style};
-use yew::prelude::*;
 use super::text_input::*;
+use stylist::{style, yew::styled_component};
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -20,7 +20,8 @@ pub fn label_input(props: &Props) -> Html {
                 line-height: 3rem;
             }
         "#
-    ).unwrap();
+    )
+    .unwrap();
     html! {
         <div class={stylesheet}>
             <label>{&props.label_text}</label>

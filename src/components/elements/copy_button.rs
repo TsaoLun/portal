@@ -24,7 +24,7 @@ pub fn copy_button(props: &Props) -> Html {
     .unwrap();
     html! {
         <div class={stylesheet}>
-            <button>{&props.name}</button>
+            <button type="button" >{&props.name}</button>
         </div>
     }
 }

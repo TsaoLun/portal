@@ -1,9 +1,12 @@
-use crate::{components::elements::{label_input::*, submit_button::*}, store::UserStore, router::Route};
-use gloo::console::log;
+use crate::{
+    components::elements::{label_input::*, submit_button::*},
+    router::Route,
+    store::UserStore,
+};
 use stylist::{style, yew::styled_component};
 use yew::prelude::*;
-use yewdux::prelude::use_store;
 use yew_router::prelude::*;
+use yewdux::prelude::use_store;
 
 #[styled_component(Login)]
 pub fn login() -> Html {
@@ -12,7 +15,7 @@ pub fn login() -> Html {
     let (_store, dispatch) = use_store::<UserStore>();
     let navigator = use_navigator().unwrap();
     let onsubmit = {
-        dispatch.reduce_mut_callback_with(move |_store, _event: SubmitEvent|{
+        dispatch.reduce_mut_callback_with(move |_store, _event: SubmitEvent| {
             navigator.push(&Route::Data)
         })
     };
