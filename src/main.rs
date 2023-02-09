@@ -2,7 +2,7 @@ mod app;
 mod components;
 mod router;
 mod store;
-use app::App;
+use app::app;
 fn main() {
-    yew::Renderer::<App>::new().render();
+    dioxus::web::launch(app);
 }
