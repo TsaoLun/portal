@@ -6,7 +6,7 @@ use crate::{
 use std::ops::Deref;
 use gloo::{console::log, utils::{document_element, document}};
 use stylist::{style, yew::styled_component};
-use web_sys::{HtmlInputElement, Docu, HtmlElement};
+use web_sys::{HtmlInputElement, Document, HtmlElement};
 use yew::prelude::*;
 use yewdux::{dispatch, prelude::*};
 
