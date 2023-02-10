@@ -1,4 +1,5 @@
 use dioxus::{events::FormEvent, prelude::*};
+use dioxus_router::*;
 
 pub fn app(cx: Scope) -> Element {
     let onsubmit = move |evt: FormEvent| {
@@ -25,17 +26,22 @@ pub fn app(cx: Scope) -> Element {
     };
 
     cx.render(rsx! {
-        h1 { "Login" }
-        form {
-            onsubmit: onsubmit,
-            prevent_default: "onsubmit", // Prevent the default behavior of <form> to post
-            label { "Username" }
-            input { r#type: "text", id: "username", name: "username" }
-            br {}
-            label { "Password" }
-            input { r#type: "password", id: "password", name: "password" }
-            br {}
-            button { "Login" }
+        Router {
+            h1 { "Login" }
+            form {
+                onsubmit: onsubmit,
+                prevent_default: "onsubmit", // Prevent the default behavior of <form> to post
+                onclick: |_| {
+                    Link { to: "/", "Home"}
+                },
+                label { "Username" }
+                input { r#type: "text", id: "username", name: "username" }
+                br {}
+                label { "Password" }
+                input { r#type: "password", id: "password", name: "password" }
+                br {}
+                button { "Login" }
+            }
         }
     })
 }

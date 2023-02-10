@@ -14,5 +14,7 @@ web-sys = { version = "0.3.60", features = ["Document", "Element"] }
 yew = { version = "0.20.0", features = ["csr"] }
 yew-router = "0.17.0"
 yewdux = "0.9.0"
-dioxus = { version = "0.2.4", features = ["web"] }
+dioxus = "0.3.1"
+dioxus-web = "0.3.0"
+dioxus-router = "0.3.0"
 reqwest = "0.11.14"
