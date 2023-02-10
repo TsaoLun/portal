@@ -1,18 +1,24 @@
-use crate::components::pages::{data::*, login::*};
-use yew::prelude::*;
-use yew_router::prelude::*;
+use dioxus::prelude::*;
+use crate::components::pages::login::*;
 
-#[derive(Clone, Routable, PartialEq)]
-pub enum Route {
-    #[at("/data")]
-    Data,
-    #[at("/login")]
-    Login,
-}
+pub fn router(cx: Scope) -> Element {
+    cx.render(rsx! {
+        Router {
+            Route { to: "/",
+                login()
+            }
+            Route { to: "/settings",
+                div {
+                    h2 { margin_bottom: "10px", "Settings" }
+                    button {
+                        background: "rgb(202, 60, 60)",
+                        class: "pure-button pure-button-primary",
 
-pub fn switch(route: Route) -> Html {
-    match route {
-        Route::Data => html! {<Data />},
-        Route::Login => html! {<Login />},
-    }
+                        "Remove all clients"
+                    }
+                    Link { to: "/", class: "pure-button pure-button-primary", "Go Back" }
+                }
+            }
+        }
+    })
 }

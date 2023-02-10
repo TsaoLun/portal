@@ -1,49 +1,48 @@
+use dioxus::{prelude::*, events::FormEvent};
+
 use crate::{
     components::elements::{label_input::*, submit_button::*},
-    router::Route,
     store::UserStore,
 };
-use stylist::{style, yew::styled_component};
-use yew::prelude::*;
-use yew_router::prelude::*;
-use yewdux::prelude::use_store;
 
-#[styled_component(Login)]
-pub fn login() -> Html {
-    let handle_username = Callback::from(|_| {});
-    let handle_password = Callback::from(|_| {});
-    let (_store, dispatch) = use_store::<UserStore>();
-    let navigator = use_navigator().unwrap();
-    let onsubmit = {
-        dispatch.reduce_mut_callback_with(move |_store, _event: SubmitEvent| {
-            navigator.push(&Route::Data)
-        })
+pub fn login(cx: Scope) -> Element {
+    let onsubmit = move |evt: FormEvent| {
+        cx.spawn(async move {
+            let resp = reqwest::Client::new()
+                .post("http://localhost:8080/login")
+                .form(&[
+                    ("username", &evt.values["username"]),
+                    ("password", &evt.values["password"]),
+                ])
+                .send()
+                .await;
+
+            match resp {
+                // Parse data from here, such as storing a response token
+                Ok(_data) => println!("Login successful!"),
+
+                //Handle any errors from the fetch here
+                Err(_err) => {
+                    println!("Login failed - you need a login server running on localhost:8080.")
+                }
+            }
+        });
     };
-    let stylesheet = style!(
-        r#"
-        display: grid;
-        place-items: center;
-        margin-right: 30px;
-        height: 95%;
-        button {
-            margin-left: 60px;
+    cx.render(rsx!{
+        style { [include_str!("../../assets/login.css")] }
+        div {
+            h1 { "Login" }
+            form {
+                onsubmit: onsubmit,
+                prevent_default: "onsubmit", // Prevent the default behavior of <form> to post
+                label { "Username" }
+                input { r#type: "text", id: "username", name: "username" }
+                br {}
+                label { "Password" }
+                input { r#type: "password", id: "password", name: "password" }
+                br {}
+                button { "Login" }
+            }
         }
-        h1 {
-            text-align: center;
-            margin-left: 60px;
-            font-size: xxx-large;
-        }
-    "#
-    )
-    .unwrap();
-    html! {
-        <div class={stylesheet}>
-            <form onsubmit={onsubmit}>
-                <h1>{"Copy That."}</h1>
-                <LabelInput label_text="用户名" input_text="请输入邮箱/手机号" onchange={handle_username}/>
-                <LabelInput label_text="密码" input_text="请输入 8 位密码" onchange={handle_password}/>
-                <SubmitButton name="提交"/>
-            </form>
-        </div>
-    }
+    })
 }
