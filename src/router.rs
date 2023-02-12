@@ -1,5 +1,5 @@
-use dioxus::prelude::*;
 use crate::components::pages::login::*;
+use dioxus::prelude::*;
 
 pub fn router(cx: Scope) -> Element {
     cx.render(rsx! {
@@ -18,6 +18,9 @@ pub fn router(cx: Scope) -> Element {
                     }
                     Link { to: "/", class: "pure-button pure-button-primary", "Go Back" }
                 }
+            }
+            Route {
+                to: "", "404 Not Found"
             }
         }
     })

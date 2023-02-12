@@ -1,12 +1,12 @@
 use dioxus::{prelude::*, events::FormEvent};
+use gloo::console::*;
 
-use crate::{
-    components::elements::{label_input::*, submit_button::*},
-    store::UserStore,
-};
+use crate::components::elements::label_input::LabelInput;
 
 pub fn login(cx: Scope) -> Element {
+    let router = use_router(&cx);
     let onsubmit = move |evt: FormEvent| {
+        let router = router.clone();
         cx.spawn(async move {
             let resp = reqwest::Client::new()
                 .post("http://localhost:8080/login")
@@ -19,11 +19,13 @@ pub fn login(cx: Scope) -> Element {
 
             match resp {
                 // Parse data from here, such as storing a response token
-                Ok(_data) => println!("Login successful!"),
+                Ok(_data) => log!("Login successful!"),
 
                 //Handle any errors from the fetch here
                 Err(_err) => {
-                    println!("Login failed - you need a login server running on localhost:8080.")
+                    log!("Login failed - you need a login server running on localhost:8080.");
+                    router.push_route("/settings", None, None);
+                    
                 }
             }
         });
@@ -35,13 +37,11 @@ pub fn login(cx: Scope) -> Element {
             form {
                 onsubmit: onsubmit,
                 prevent_default: "onsubmit", // Prevent the default behavior of <form> to post
-                label { "Username" }
-                input { r#type: "text", id: "username", name: "username" }
+                LabelInput{name: "账号", id: "username"}
                 br {}
-                label { "Password" }
-                input { r#type: "password", id: "password", name: "password" }
+                LabelInput{self_type: "password", name: "密码", id: "password"}
                 br {}
-                button { "Login" }
+                button { "登陆" }
             }
         }
     })

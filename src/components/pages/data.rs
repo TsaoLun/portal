@@ -9,6 +9,7 @@ use stylist::{style, yew::styled_component};
 use web_sys::{HtmlInputElement, Document, HtmlElement};
 use yew::prelude::*;
 use yewdux::{dispatch, prelude::*};
+use dioxus::prelude::*;
 
 #[function_component(Data)]
 pub fn data() -> Html {
@@ -19,7 +20,7 @@ pub fn data() -> Html {
 
 #[styled_component(Form)]
 pub fn form() -> Html {
-    let state = use_state(|| "请输入");
+    let state = yew::use_state(|| "请输入");
     let (_store, dispatch) = use_store::<BoardStore>();
     let onsubmit = {
         let state = state.clone();
@@ -85,4 +86,11 @@ pub fn form() -> Html {
             </ContextProvider<String>>
         </div>
     }
+}
+
+pub fn data(cx: Scope) -> Element {
+    // cx.render(rsx!{
+    //     //style
+    // })
+    todo!()
 }

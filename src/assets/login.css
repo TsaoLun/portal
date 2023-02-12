@@ -10,21 +10,6 @@ h1 {
     margin-left: 60px;
     font-size: xxx-large;
 }
-label {
-    width: 80px;
-    line-height: 3rem;
-    align-self: flex-start;
-    display: inline-block;
-}
-input {
-    width: 300px;
-    height: 30px;
-    font-size: medium;
-    padding-inline: 10px;
-    border-radius: 0px;
-    outline-color: orange;
-    border: 2px solid black;
-}
 button {
     width: 80px;
     height: 40px;
