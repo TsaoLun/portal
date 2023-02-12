@@ -3,7 +3,8 @@ use gloo::console::*;
 
 use crate::components::elements::label_input::LabelInput;
 
-pub fn login(cx: Scope) -> Element {
+#[allow(non_snake_case)]
+pub fn Login(cx: Scope) -> Element {
     let router = use_router(&cx);
     let onsubmit = move |evt: FormEvent| {
         let router = router.clone();
@@ -24,7 +25,7 @@ pub fn login(cx: Scope) -> Element {
                 //Handle any errors from the fetch here
                 Err(_err) => {
                     log!("Login failed - you need a login server running on localhost:8080.");
-                    router.push_route("/settings", None, None);
+                    router.push_route("/data", None, None);
                     
                 }
             }
