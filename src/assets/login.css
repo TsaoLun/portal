@@ -1,7 +1,8 @@
 div {
     display: grid;
     place-items: center;
-    margin-right: 30px;
+    padding-right: 30px;
+    padding-top: 100px;
     text-align: center;
 }
 h1 {
