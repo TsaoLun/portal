@@ -7,7 +7,7 @@ pub struct SelfProps<'a> {
 }
 
 #[allow(non_snake_case)]
-pub fn LabelInput<'a>(cx: Scope<'a, SelfProps<'a>>) -> Element<'a> {
+pub fn LabelInput<'a>(cx: Scope<'a, SelfProps<'a>>) -> Element {
     let input_type = if let Some(t) = cx.props.self_type {
         t
     } else {
