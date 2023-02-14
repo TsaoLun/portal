@@ -1,18 +1,29 @@
 use crate::components::elements::label_input::LabelInput;
 use dioxus::prelude::*;
-use gloo::console::*;
 use wasm_bindgen::JsCast;
-use web_sys::HtmlDocument;
+use web_sys::{HtmlDocument, HtmlTextAreaElement};
+use gloo::console::*;
 
-#[allow(non_snake_case)]
-pub fn Data(cx: Scope) -> Element {
-    let state = use_state(&cx, || "请输入");
+fn copy() -> bool {
     let document = web_sys::window()
         .unwrap()
         .document()
         .unwrap()
         .dyn_into::<HtmlDocument>()
         .unwrap();
+    let element = document.create_element("textarea").unwrap().unchecked_into::<HtmlTextAreaElement>();
+    let body = document.body().unwrap();
+    body.append_with_node_1(&element).unwrap();
+    element.set_text_content(Some("xyz"));
+    element.select();
+    let res = document.exec_command("copy").unwrap();
+    body.remove_child(&element).unwrap();
+    res
+}
+
+#[allow(non_snake_case)]
+pub fn Data(cx: Scope) -> Element {
+    let state = use_state(&cx, || "请输入");
     cx.render(rsx! {
         form {
             oninput: |_| state.set("输入中..."),
@@ -22,17 +33,15 @@ pub fn Data(cx: Scope) -> Element {
             style { [include_str!("../../assets/data.css")] }
             h1 {"{state}"}
             form {
-                onclick: move |e|{
-                    e.cancel_bubble();
-
-                    let res = document.exec_command("copy").is_ok();
-                    log!(res);
-                },
-                prevent_default: "onclick",
                 LabelInput{
                     name:"INPUT", id:"data"
                 }
                 button {
+                    onclick: move |e|{
+                        e.cancel_bubble();
+                        log!("copy data:", copy());
+                    },
+                    prevent_default: "onclick",
                     class:"copy",
                     "C"
                 }
