@@ -1,0 +1,19 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Mutation {
+    login(credentials: LoginInput!): LoginResponse!
+    set(data: String!): Boolean!
+}
+
+input LoginInput {
+    username: String!
+    password: String!
+}
+
+type LoginResponse {
+    token: String!
+}

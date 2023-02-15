@@ -21,15 +21,15 @@ async fn index_graphiql() -> Result<HttpResponse> {
         .content_type("text/html; charset=utf-8")
         .body(
             http::GraphiQLSource::build()
-                .endpoint("http://localhost:8000")
-                .subscription_endpoint("ws://localhost:8000")
+                .endpoint("http://127.0.0.1:8000")
+                .subscription_endpoint("ws://127.0.0.1:8000")
                 .finish(),
         ))
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let schema = Schema::build(QueryRoot, MutationRoot, SubscriptionRoot)
+    let schema = Schema::build(QueryRoot, Set, SubscriptionRoot)
         .data(Storage::default())
         .finish();
 

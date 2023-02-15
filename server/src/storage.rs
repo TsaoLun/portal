@@ -3,7 +3,7 @@ use futures_util::{lock::Mutex, Stream};
 use std::sync::Arc;
 use std::time::Duration;
 
-pub type DataSchema = Schema<QueryRoot, MutationRoot, SubscriptionRoot>;
+pub type DataSchema = Schema<QueryRoot, Set, SubscriptionRoot>;
 use slab::Slab;
 pub struct QueryRoot;
 
@@ -21,10 +21,10 @@ impl QueryRoot {
     }
 }
 
-pub struct MutationRoot;
+pub struct Set;
 
 #[Object]
-impl MutationRoot {
+impl Set {
     async fn set(&self, ctx: &Context<'_>, data: String) -> bool {
         let mut storage = ctx.data_unchecked::<Storage>().lock().await;
         storage.clear();

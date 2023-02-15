@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 pub mod post;
 pub mod login;
+pub mod data;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]

@@ -22,7 +22,7 @@ where
     let mut builder = Request::post(SERVER)
         .body(body)
         .header("Content-Type", "application/json")
-        .mode(RequestMode::Cors);
+        .mode(RequestMode::NoCors);
 
     if let Some(token) = token {
         let bearer = format!{"Bearer {}", token};
@@ -35,6 +35,8 @@ where
 
     match resp {
         Ok(resp) => {
+            let x = resp.as_raw();
+            log!(x);
             if resp.ok() {
                 let data: ResponseWrapper<T> = resp.json().await.unwrap();
 

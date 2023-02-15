@@ -17,7 +17,10 @@ pub fn Login(cx: Scope) -> Element {
             //     ])
             //     .send()
             //     .await;
-            let resp = login::login(&evt.values["username"], &evt.values["password"]).await;
+            for key in evt.values.keys() {
+                log!(key);
+            }
+            let resp = login::login(evt.values["username"].clone(), evt.values["password"].clone()).await;
 
             match resp {
                 // Parse data from here, such as storing a response token
@@ -25,7 +28,7 @@ pub fn Login(cx: Scope) -> Element {
 
                 //Handle any errors from the fetch here
                 Err(_err) => {
-                    log!("Login failed - you need a login server running on localhost:8080.");
+                    log!("Login failed - you need a login server running on 127.0.0.1:8080.");
                     router.push_route("/data", None, None);
                     
                 }
