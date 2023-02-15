@@ -1,5 +1,6 @@
 mod components;
 mod router;
+mod api;
 use dioxus::prelude::*;
 use router::router;
 fn main() {

@@ -1,7 +1,7 @@
 use dioxus::{prelude::*, events::FormEvent};
 use gloo::console::*;
 
-use crate::components::elements::label_input::LabelInput;
+use crate::{components::elements::label_input::LabelInput, api::login};
 
 #[allow(non_snake_case)]
 pub fn Login(cx: Scope) -> Element {
@@ -9,14 +9,15 @@ pub fn Login(cx: Scope) -> Element {
     let onsubmit = move |evt: FormEvent| {
         let router = router.clone();
         cx.spawn(async move {
-            let resp = reqwest::Client::new()
-                .post("http://localhost:8080/login")
-                .form(&[
-                    ("username", &evt.values["username"]),
-                    ("password", &evt.values["password"]),
-                ])
-                .send()
-                .await;
+            // let resp = reqwest::Client::new()
+            //     .post("http://localhost:8080/login")
+            //     .form(&[
+            //         ("username", &evt.values["username"]),
+            //         ("password", &evt.values["password"]),
+            //     ])
+            //     .send()
+            //     .await;
+            let resp = login::login(&evt.values["username"], &evt.values["password"]).await;
 
             match resp {
                 // Parse data from here, such as storing a response token
