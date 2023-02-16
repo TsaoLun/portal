@@ -6,7 +6,7 @@ schema {
 
 type Mutation {
     login(credentials: LoginInput!): LoginResponse!
-    set(data: String!): Boolean!
+    set(data: String!): SetResponse!
 }
 
 input LoginInput {
@@ -16,4 +16,8 @@ input LoginInput {
 
 type LoginResponse {
     token: String!
+}
+
+type SetResponse {
+    ok: Boolean
 }

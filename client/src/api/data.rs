@@ -1,6 +1,8 @@
 use graphql_client::GraphQLQuery;
 use gloo::{storage::{LocalStorage, Storage}, console::*};
-use super::post::*;
+use self::set::Variables;
+
+use super::{post::*, GraphQLError};
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -11,10 +13,13 @@ use super::post::*;
 )]
 pub struct Set;
 
-pub async fn set(data: String) -> Result<set::ResponseData,String> {
+pub async fn set(data: String) -> Result<set::ResponseData, String> {
+
     let body = Set::build_query(set::Variables{
         data,
     });
+
+
     let resp = post::<set::Variables, set::ResponseData>(body).await;
     match resp {
         Ok(data) => {

@@ -1,3 +1,5 @@
 mutation Set($data: String!) {
-    set(data: $data)
+    set(data: $data) {
+         ok
+    }
 }

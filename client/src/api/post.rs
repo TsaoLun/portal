@@ -35,8 +35,8 @@ where
 
     match resp {
         Ok(resp) => {
-            let x = resp.as_raw();
-            log!(x);
+            log!(resp.status());
+            log!(resp.as_raw());
             if resp.ok() {
                 let data: ResponseWrapper<T> = resp.json().await.unwrap();
 

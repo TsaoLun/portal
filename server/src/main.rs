@@ -1,6 +1,7 @@
 mod storage;
 use crate::storage::*;
 use actix_web::{guard, web, web::Data, App, HttpRequest, HttpResponse, HttpServer, Result};
+use actix_cors::Cors;
 use async_graphql::*;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
 
@@ -29,13 +30,15 @@ async fn index_graphiql() -> Result<HttpResponse> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let schema = Schema::build(QueryRoot, Set, SubscriptionRoot)
+    let schema = Schema::build(Query, Mutation, Subscription)
         .data(Storage::default())
         .finish();
 
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(schema.clone()))
+            .wrap(Cors::permissive())
+            //.wrap(actix_web::middleware::Logger::default())
             .service(web::resource("/").guard(guard::Post()).to(index))
             .service(
                 web::resource("/")
