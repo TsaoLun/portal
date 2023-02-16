@@ -1,26 +1,19 @@
 use dioxus::{prelude::*, events::FormEvent};
 use gloo::console::*;
-
-use crate::{components::elements::label_input::LabelInput, api::login};
+use std::rc::Rc;
+use crate::{components::elements::label_input::LabelInput, api::{login, init_request}};
 
 #[allow(non_snake_case)]
 pub fn Login(cx: Scope) -> Element {
     let router = use_router(&cx);
+    let request = init_request();
     let onsubmit = move |evt: FormEvent| {
         let router = router.clone();
         cx.spawn(async move {
-            // let resp = reqwest::Client::new()
-            //     .post("http://localhost:8080/login")
-            //     .form(&[
-            //         ("username", &evt.values["username"]),
-            //         ("password", &evt.values["password"]),
-            //     ])
-            //     .send()
-            //     .await;
             for key in evt.values.keys() {
                 log!(key);
             }
-            let resp = login::login(evt.values["username"].clone(), evt.values["password"].clone()).await;
+            let resp = login::login(request, evt.values["username"].clone(), evt.values["password"].clone()).await;
 
             match resp {
                 // Parse data from here, such as storing a response token

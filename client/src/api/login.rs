@@ -1,30 +1,33 @@
-use graphql_client::GraphQLQuery;
+use std::error::Error;
+
+use graphql_client::{GraphQLQuery, Response};
 use gloo::storage::{LocalStorage, Storage};
-use super::post::*;
+use reqwest::RequestBuilder;
+use wasm_bindgen::UnwrapThrowExt;
 
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "src/api/schema/schema.graphql",
     query_path = "src/api/schema/login.graphql",
     response_derives = "Debug, Clone",
-    variables_derives = "Deserialize, Debug"
+    variables_derives = "Debug"
 )]
 pub struct Login;
 
-pub async fn login(username: String, password: String) -> Result<login::ResponseData,String> {
+pub async fn login(request: RequestBuilder, username: String, password: String) -> Result<(), Box<dyn Error>> {
     let body = Login::build_query(login::Variables{
         username,
         password,
     });
     
-    let resp = post::<login::Variables, login::ResponseData>(body).await;
+    let response_body: Response<login::ResponseData> = request
+        .json(&body)
+        .send()
+        .await?
+        .json()
+        .await?;
 
-    match resp {
-        Ok(data) => {
-            // TODO: Handle unwrap yeah?
-            LocalStorage::set("token", data.login.token.clone()).unwrap();
-            Ok(data)
-        },
-        Err(err) => Err(err),
-    }
+    let token = response_body.data.expect_throw("login response err").login.token;
+    LocalStorage::set("token", token);
+    Ok(())
 }

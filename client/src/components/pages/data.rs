@@ -1,4 +1,7 @@
-use crate::{components::elements::label_input::LabelInput, api::data};
+use crate::{
+    api::{data, init_request},
+    components::elements::label_input::LabelInput,
+};
 use dioxus::{events::FormEvent, prelude::*};
 use gloo::console::*;
 use wasm_bindgen::JsCast;
@@ -32,14 +35,14 @@ pub fn Data(cx: Scope) -> Element {
             oninput: |_| state.set("输入中..."),
             onchange: |_| state.set("请记得提交~"),
             onsubmit: move |e: FormEvent| {
+                let request = init_request();
                 state.set("感谢您的提交 ^ ^");
-                //e.values["data"];
                 cx.spawn(async move {
-                    let res = data::set(e.values["data"].clone()).await;
+                    let res = data::set_mutation(request, e.values["data"].clone()).await;
                     match res {
-                        Ok(_data) => log!("ok"),
+                        Ok(_data) => log!(_data),
                         Err(_err) => {
-                            log!(_err);
+                            log!("err");
                         }
                     }
                 });
@@ -47,7 +50,7 @@ pub fn Data(cx: Scope) -> Element {
             prevent_default: "onsubmit",
             style { [include_str!("../../assets/data.css")] }
             h1 {"{state}"}
-        
+
             LabelInput{
                 name:"INPUT", id:"data"
             }
@@ -66,7 +69,7 @@ pub fn Data(cx: Scope) -> Element {
             class:"submit",
                 "提交"
             }
-            
+
         }
     })
 }

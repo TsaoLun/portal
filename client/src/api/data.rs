@@ -1,8 +1,7 @@
-use graphql_client::GraphQLQuery;
-use gloo::{storage::{LocalStorage, Storage}, console::*};
-use self::set::Variables;
-
-use super::{post::*, GraphQLError};
+use graphql_client::{GraphQLQuery, Response};
+use reqwest::RequestBuilder;
+use std::error::Error;
+use wasm_bindgen::UnwrapThrowExt;
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -13,18 +12,14 @@ use super::{post::*, GraphQLError};
 )]
 pub struct Set;
 
-pub async fn set(data: String) -> Result<set::ResponseData, String> {
-
-    let body = Set::build_query(set::Variables{
-        data,
-    });
-
-
-    let resp = post::<set::Variables, set::ResponseData>(body).await;
-    match resp {
-        Ok(data) => {
-            Ok(data)
-        },
-        Err(err) => Err(err),
-    }
+pub async fn set_mutation(request: RequestBuilder, data: String) -> Result<bool, Box<dyn Error>> {
+    let request_body = Set::build_query(set::Variables { data });
+    let response_body: Response<set::ResponseData> =
+        request.json(&request_body).send().await?.json().await?;
+    Ok(response_body
+        .data
+        .expect_throw("response data")
+        .set
+        .ok
+        .unwrap_or(false))
 }
