@@ -9,6 +9,10 @@ type Mutation {
     set(data: String!): SetResponse!
 }
 
+type Query {
+    get: String!
+}
+
 input LoginInput {
     username: String!
     password: String!

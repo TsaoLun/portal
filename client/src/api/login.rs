@@ -28,6 +28,6 @@ pub async fn login(request: RequestBuilder, username: String, password: String) 
         .await?;
 
     let token = response_body.data.expect_throw("login response err").login.token;
-    LocalStorage::set("token", token);
+    LocalStorage::set("token", token).unwrap();
     Ok(())
 }
