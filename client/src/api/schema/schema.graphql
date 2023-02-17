@@ -6,7 +6,7 @@ schema {
 
 type Mutation {
     login(credentials: LoginInput!): LoginResponse!
-    set(data: String!): SetResponse!
+    set(data: String!): Boolean!
 }
 
 type Query {

@@ -3,8 +3,6 @@ use reqwest::RequestBuilder;
 use std::error::Error;
 use wasm_bindgen::UnwrapThrowExt;
 
-use crate::components::pages::data;
-
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "src/api/schema/schema.graphql",
@@ -18,12 +16,7 @@ pub async fn set_mutation(request: RequestBuilder, data: String) -> Result<bool,
     let request_body = Set::build_query(set::Variables { data });
     let response_body: Response<set::ResponseData> =
         request.json(&request_body).send().await?.json().await?;
-    Ok(response_body
-        .data
-        .expect_throw("response data err")
-        .set
-        .ok
-        .unwrap_or(false))
+    Ok(response_body.data.expect_throw("response data err").set)
 }
 
 #[derive(GraphQLQuery)]
@@ -37,12 +30,7 @@ pub struct Get;
 
 pub async fn get_query(request: RequestBuilder) -> Result<String, Box<dyn Error>> {
     let request_body = Get::build_query(get::Variables);
-    let response_body: Response<get::ResponseData> = 
-        request
-        .json(&request_body)
-        .send()
-        .await?
-        .json()
-        .await?;
+    let response_body: Response<get::ResponseData> =
+        request.json(&request_body).send().await?.json().await?;
     Ok(response_body.data.expect_throw("response data err").get)
 }
