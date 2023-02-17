@@ -2,11 +2,13 @@ use crate::{
     api::{data, init_request},
     components::elements::label_input::LabelInput,
 };
-use dioxus::{events::{FormEvent, MouseEvent}, prelude::*};
+use dioxus::{
+    events::{FormEvent, MouseEvent},
+    prelude::*,
+};
 use gloo::console::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlDocument, HtmlTextAreaElement};
-
 
 #[allow(non_snake_case)]
 pub fn Data(cx: Scope) -> Element {

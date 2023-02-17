@@ -1,7 +1,7 @@
 use std::error::Error;
 
-use graphql_client::{GraphQLQuery, Response};
 use gloo::storage::{LocalStorage, Storage};
+use graphql_client::{GraphQLQuery, Response};
 use reqwest::RequestBuilder;
 use wasm_bindgen::UnwrapThrowExt;
 
@@ -14,20 +14,21 @@ use wasm_bindgen::UnwrapThrowExt;
 )]
 pub struct Login;
 
-pub async fn login(request: RequestBuilder, username: String, password: String) -> Result<(), Box<dyn Error>> {
-    let body = Login::build_query(login::Variables{
-        username,
-        password,
-    });
-    
-    let response_body: Response<login::ResponseData> = request
-        .json(&body)
-        .send()
-        .await?
-        .json()
-        .await?;
+pub async fn login(
+    request: RequestBuilder,
+    username: String,
+    password: String,
+) -> Result<(), Box<dyn Error>> {
+    let body = Login::build_query(login::Variables { username, password });
 
-    let token = response_body.data.expect_throw("login response err").login.token;
+    let response_body: Response<login::ResponseData> =
+        request.json(&body).send().await?.json().await?;
+
+    let token = response_body
+        .data
+        .expect_throw("login response err")
+        .login
+        .token;
     LocalStorage::set("token", token).unwrap();
     Ok(())
 }

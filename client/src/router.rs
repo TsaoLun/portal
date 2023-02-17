@@ -1,4 +1,4 @@
-use crate::components::pages::{login::*, data::*};
+use crate::components::pages::{data::*, login::*};
 use dioxus::prelude::*;
 
 pub fn router(cx: Scope) -> Element {

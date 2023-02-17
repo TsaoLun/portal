@@ -1,6 +1,9 @@
-use dioxus::{prelude::*, events::FormEvent};
+use crate::{
+    api::{init_request, login},
+    components::elements::label_input::LabelInput,
+};
+use dioxus::{events::FormEvent, prelude::*};
 use gloo::console::*;
-use crate::{components::elements::label_input::LabelInput, api::{login, init_request}};
 
 #[allow(non_snake_case)]
 pub fn Login(cx: Scope) -> Element {
@@ -11,7 +14,12 @@ pub fn Login(cx: Scope) -> Element {
             for key in evt.values.keys() {
                 log!(key);
             }
-            let resp = login::login(init_request(), evt.values["username"].clone(), evt.values["password"].clone()).await;
+            let resp = login::login(
+                init_request(),
+                evt.values["username"].clone(),
+                evt.values["password"].clone(),
+            )
+            .await;
 
             match resp {
                 // Parse data from here, such as storing a response token
@@ -21,12 +29,11 @@ pub fn Login(cx: Scope) -> Element {
                 Err(_err) => {
                     log!("Login failed - you need a login server running on 127.0.0.1:8080.");
                     router.push_route("/data", None, None);
-                    
                 }
             }
         });
     };
-    cx.render(rsx!{
+    cx.render(rsx! {
         style { [include_str!("../../assets/login.css")] }
         div {
             h1 { "Login" }
