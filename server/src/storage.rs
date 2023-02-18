@@ -36,7 +36,7 @@ impl Query {
             Ok(data[0].clone())
         }
     }
-    async fn login(&self, ctx: &Context<'_>, username: String, password: String) -> FieldResult<TokenResponse> {
+    async fn login(&self, _ctx: &Context<'_>, username: String, password: String) -> FieldResult<TokenResponse> {
         if username == env::var("USERNAME").unwrap() && password == env::var("PASSWORD").unwrap() {
             let now = Utc::now().timestamp_millis();
             let claims = Claims {

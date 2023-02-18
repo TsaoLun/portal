@@ -1,13 +1,22 @@
 mod storage;
 use crate::storage::*;
 use actix_cors::Cors;
-use actix_web::{guard, web, http::header::HeaderMap, web::Data, App, HttpRequest, HttpResponse, HttpServer, Result};
+use actix_web::{
+    guard, http::header::HeaderMap, web, web::Data, App, HttpRequest, HttpResponse, HttpServer,
+    Result,
+};
 use async_graphql::*;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
 use dotenv::dotenv;
 use storage::Token;
 
-async fn index(schema: web::Data<DataSchema>, req: HttpRequest, gql_req: GraphQLRequest) -> GraphQLResponse {
+const SERVER_URL: &str = "127.0.0.1:8000";
+
+async fn index(
+    schema: web::Data<DataSchema>,
+    req: HttpRequest,
+    gql_req: GraphQLRequest,
+) -> GraphQLResponse {
     let token = get_token_from_headers(req.headers());
     let mut request = gql_req.into_inner();
     if let Some(token) = token {
@@ -29,8 +38,8 @@ async fn index_graphiql() -> Result<HttpResponse> {
         .content_type("text/html; charset=utf-8")
         .body(
             http::GraphiQLSource::build()
-                .endpoint("http://127.0.0.1:8000")
-                .subscription_endpoint("ws://127.0.0.1:8000")
+                .endpoint(&format!("http://{}", SERVER_URL))
+                .subscription_endpoint(&format!("ws://{}", SERVER_URL))
                 .finish(),
         ))
 }
@@ -41,7 +50,7 @@ async fn main() -> std::io::Result<()> {
     let schema = Schema::build(Query, Mutation, EmptySubscription)
         .data(Storage::default())
         .finish();
-
+    println!("\n> server run at http://{}.\n", SERVER_URL);
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(schema.clone()))
@@ -56,13 +65,18 @@ async fn main() -> std::io::Result<()> {
             )
             .service(web::resource("/").guard(guard::Get()).to(index_graphiql))
     })
-    .bind("127.0.0.1:8000")?
+    .bind(SERVER_URL)?
     .run()
     .await
 }
 
 fn get_token_from_headers(headers: &HeaderMap) -> Option<Token> {
-    headers
-    .get("Authorization")
-    .and_then(|value| value.to_str().map(|s| Token { token: s.to_string().replace("Breaer ", "")}).ok())
+    headers.get("Authorization").and_then(|value| {
+        value
+            .to_str()
+            .map(|s| Token {
+                token: s.to_string().replace("Breaer ", ""),
+            })
+            .ok()
+    })
 }
