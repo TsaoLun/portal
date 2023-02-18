@@ -1,7 +1,7 @@
 use graphql_client::{GraphQLQuery, Response};
 use reqwest::RequestBuilder;
 use std::error::Error;
-use wasm_bindgen::UnwrapThrowExt;
+use wasm_bindgen::{throw_str, UnwrapThrowExt};
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -16,6 +16,10 @@ pub async fn set_mutation(request: RequestBuilder, data: String) -> Result<bool,
     let request_body = Set::build_query(set::Variables { data });
     let response_body: Response<set::ResponseData> =
         request.json(&request_body).send().await?.json().await?;
+    if response_body.errors.is_some() {
+        let err = response_body.errors.unwrap().get(0).unwrap().to_string();
+        throw_str(&err);
+    }
     Ok(response_body.data.expect_throw("response data err").set)
 }
 

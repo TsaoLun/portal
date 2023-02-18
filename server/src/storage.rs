@@ -1,9 +1,7 @@
 use async_graphql::{Context, EmptySubscription, FieldError, FieldResult, Object, Schema};
 use chrono::Utc;
 use futures_util::lock::Mutex;
-use jsonwebtoken::{
-    decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation,
-};
+use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 use std::{env, sync::Arc};
 
@@ -36,7 +34,12 @@ impl Query {
             Ok(data[0].clone())
         }
     }
-    async fn login(&self, _ctx: &Context<'_>, username: String, password: String) -> FieldResult<TokenResponse> {
+    async fn login(
+        &self,
+        _ctx: &Context<'_>,
+        username: String,
+        password: String,
+    ) -> FieldResult<TokenResponse> {
         if username == env::var("USERNAME").unwrap() && password == env::var("PASSWORD").unwrap() {
             let now = Utc::now().timestamp_millis();
             let claims = Claims {
@@ -55,7 +58,7 @@ impl Query {
                 Err(e) => {
                     println!("{}", e);
                     Err(FieldError::from("unknown err"))?
-                },
+                }
             };
             Ok(TokenResponse {
                 ok: true,
@@ -102,7 +105,6 @@ impl TokenResponse {
 fn validate(ctx: &Context<'_>) -> Result<(), FieldError> {
     let token = ctx.data_opt::<Token>();
     if let Some(token) = token {
-        println!("{:?}", token);
         match decode::<Claims>(
             &token.token,
             &DecodingKey::from_secret(env::var("JWT_KEY").unwrap().as_bytes()),

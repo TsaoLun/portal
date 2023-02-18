@@ -18,17 +18,13 @@ pub async fn login(
     request: RequestBuilder,
     username: String,
     password: String,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<bool, Box<dyn Error>> {
     let body = Login::build_query(login::Variables { username, password });
 
     let response_body: Response<login::ResponseData> =
         request.json(&body).send().await?.json().await?;
 
-    let token = response_body
-        .data
-        .expect_throw("login response err")
-        .login
-        .token;
-    LocalStorage::set("token", token).unwrap();
-    Ok(())
+    let res = response_body.data.expect_throw("login response err").login;
+    LocalStorage::set("token", res.token).unwrap();
+    Ok(res.ok)
 }

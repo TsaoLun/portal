@@ -1,5 +1,5 @@
 use crate::{
-    api::{request, login},
+    api::{login, request},
     components::elements::label_input::LabelInput,
 };
 use dioxus::{events::FormEvent, prelude::*};
@@ -11,9 +11,6 @@ pub fn Login(cx: Scope) -> Element {
     let onsubmit = move |evt: FormEvent| {
         let router = router.clone();
         cx.spawn(async move {
-            for key in evt.values.keys() {
-                log!(key);
-            }
             let resp = login::login(
                 request(),
                 evt.values["username"].clone(),
@@ -23,12 +20,17 @@ pub fn Login(cx: Scope) -> Element {
 
             match resp {
                 // Parse data from here, such as storing a response token
-                Ok(_data) => log!("Login successful!"),
-
+                Ok(ok) => {
+                    if ok {
+                        log!("Login successful!");
+                        router.push_route("/data", None, None);
+                    } else {
+                        log!("login fail.");
+                    }
+                }
                 //Handle any errors from the fetch here
                 Err(_err) => {
                     log!("Login failed - you need a login server running on 127.0.0.1:8080.");
-                    router.push_route("/data", None, None);
                 }
             }
         });

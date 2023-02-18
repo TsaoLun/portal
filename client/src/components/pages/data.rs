@@ -40,13 +40,17 @@ pub fn Data(cx: Scope) -> Element {
             oninput: |_| state.set("输入中..."),
             onchange: |_| state.set("请记得提交~"),
             onsubmit: move |e: FormEvent| {
-                state.set("感谢您的提交 ^ ^");
+                let state = state.clone();
                 cx.spawn(async move {
                     let res = data::set_mutation(request(), e.values["data"].clone()).await;
                     match res {
-                        Ok(_data) => log!(_data),
-                        Err(_err) => {
-                            log!("err");
+                        Ok(_data) => {
+                            log!("data submitted!");
+                            state.set("感谢您的提交 ^ ^");
+                        }
+                        Err(err) => {
+                            log!(err.to_string());
+                            state.set("服务器异常");
                         }
                     }
                 });

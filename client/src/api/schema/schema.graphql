@@ -5,11 +5,11 @@ schema {
 }
 
 type Mutation {
-    login(credentials: LoginInput!): LoginResponse!
     set(data: String!): Boolean!
 }
 
 type Query {
+    login(username: String!, password: String!): TokenResponse!
     get: String!
 }
 
@@ -18,8 +18,9 @@ input LoginInput {
     password: String!
 }
 
-type LoginResponse {
-    token: String!
+type TokenResponse {
+    ok: Boolean!
+    token: String
 }
 
 type SetResponse {

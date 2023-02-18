@@ -1,11 +1,12 @@
-mutation Login(
+query Login(
     $username: String!
     $password: String!
 ) {
-    login(credentials: {
-        usernameOrEmail: $username
+    login(
+        username: $username
         password: $password
-    }) {
+    ) {
+        ok
         token
     }
 }

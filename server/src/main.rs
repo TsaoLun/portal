@@ -50,7 +50,7 @@ async fn main() -> std::io::Result<()> {
     let schema = Schema::build(Query, Mutation, EmptySubscription)
         .data(Storage::default())
         .finish();
-    println!("\n> server run at http://{}.\n", SERVER_URL);
+    println!("\n> server run on http://{}.\n", SERVER_URL);
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(schema.clone()))
@@ -75,7 +75,7 @@ fn get_token_from_headers(headers: &HeaderMap) -> Option<Token> {
         value
             .to_str()
             .map(|s| Token {
-                token: s.to_string().replace("Breaer ", ""),
+                token: s.to_string().replace("Bearer ", ""),
             })
             .ok()
     })
