@@ -1,13 +1,19 @@
-mod auth;
 mod storage;
 use crate::storage::*;
 use actix_cors::Cors;
-use actix_web::{guard, web, web::Data, App, HttpRequest, HttpResponse, HttpServer, Result};
+use actix_web::{guard, web, http::header::HeaderMap, web::Data, App, HttpRequest, HttpResponse, HttpServer, Result};
 use async_graphql::*;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
+use dotenv::dotenv;
+use storage::Token;
 
-async fn index(schema: web::Data<DataSchema>, req: GraphQLRequest) -> GraphQLResponse {
-    schema.execute(req.into_inner()).await.into()
+async fn index(schema: web::Data<DataSchema>, req: HttpRequest, gql_req: GraphQLRequest) -> GraphQLResponse {
+    let token = get_token_from_headers(req.headers());
+    let mut request = gql_req.into_inner();
+    if let Some(token) = token {
+        request = request.data(token);
+    }
+    schema.execute(request).await.into()
 }
 
 async fn index_ws(
@@ -31,6 +37,7 @@ async fn index_graphiql() -> Result<HttpResponse> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    dotenv().ok();
     let schema = Schema::build(Query, Mutation, EmptySubscription)
         .data(Storage::default())
         .finish();
@@ -52,4 +59,10 @@ async fn main() -> std::io::Result<()> {
     .bind("127.0.0.1:8000")?
     .run()
     .await
+}
+
+fn get_token_from_headers(headers: &HeaderMap) -> Option<Token> {
+    headers
+    .get("Authorization")
+    .and_then(|value| value.to_str().map(|s| Token { token: s.to_string().replace("Breaer ", "")}).ok())
 }

@@ -1,5 +1,5 @@
 use crate::{
-    api::{data, init_request},
+    api::{data, request},
     components::elements::label_input::LabelInput,
 };
 use dioxus::{
@@ -16,7 +16,7 @@ pub fn Data(cx: Scope) -> Element {
     let onclick = move |e: MouseEvent| {
         e.cancel_bubble();
         cx.spawn(async move {
-            let data = data::get_query(init_request()).await.unwrap();
+            let data = data::get_query(request()).await.unwrap();
             let document = web_sys::window()
                 .unwrap()
                 .document()
@@ -42,7 +42,7 @@ pub fn Data(cx: Scope) -> Element {
             onsubmit: move |e: FormEvent| {
                 state.set("感谢您的提交 ^ ^");
                 cx.spawn(async move {
-                    let res = data::set_mutation(init_request(), e.values["data"].clone()).await;
+                    let res = data::set_mutation(request(), e.values["data"].clone()).await;
                     match res {
                         Ok(_data) => log!(_data),
                         Err(_err) => {

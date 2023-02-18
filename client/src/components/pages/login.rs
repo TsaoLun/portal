@@ -1,5 +1,5 @@
 use crate::{
-    api::{init_request, login},
+    api::{request, login},
     components::elements::label_input::LabelInput,
 };
 use dioxus::{events::FormEvent, prelude::*};
@@ -15,7 +15,7 @@ pub fn Login(cx: Scope) -> Element {
                 log!(key);
             }
             let resp = login::login(
-                init_request(),
+                request(),
                 evt.values["username"].clone(),
                 evt.values["password"].clone(),
             )
