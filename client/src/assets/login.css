@@ -3,7 +3,7 @@ div {
 }
 h1 {
     text-align: center;
-    margin-left: 60px;
+    margin-left: 20px;
     font-size: xx-large;
 }
 button {
@@ -11,11 +11,12 @@ button {
     height: 40px;
     font-size: medium;
     border-radius: 0px;
-    margin-left: 60px;
+    margin-left: 20px;
     margin-top: 10px;
 }
 div form input {
     width: 200px;
+    margin-right: 30px;
 }
 
 @media screen and (orientation: landscape) {
