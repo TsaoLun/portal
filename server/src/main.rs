@@ -50,7 +50,7 @@ async fn main() -> std::io::Result<()> {
     let schema = Schema::build(Query, Mutation, EmptySubscription)
         .data(Storage::default())
         .finish();
-    println!("\n> server run on http://{}.\n", SERVER_URL);
+    println!("\n> server run on http://{}.", SERVER_URL);
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(schema.clone()))

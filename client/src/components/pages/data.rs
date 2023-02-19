@@ -6,15 +6,17 @@ use dioxus::{
     events::{FormEvent, MouseEvent},
     prelude::*,
 };
-use gloo::console::*;
+use dioxus_router::use_router;
+use gloo::{console::*, dialogs::alert};
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlDocument, HtmlTextAreaElement};
 
 #[allow(non_snake_case)]
 pub fn Data(cx: Scope) -> Element {
     let state = use_state(&cx, || "请输入");
+    let router = use_router(&cx);
     let onclick = move |e: MouseEvent| {
-        e.cancel_bubble();
+        e.stop_propagation();
         cx.spawn(async move {
             let data = data::get_query(request()).await.unwrap();
             let document = web_sys::window()
@@ -41,22 +43,24 @@ pub fn Data(cx: Scope) -> Element {
             onchange: |_| state.set("请记得提交~"),
             onsubmit: move |e: FormEvent| {
                 let state = state.clone();
+                let router = router.clone();
                 cx.spawn(async move {
                     let res = data::set_mutation(request(), e.values["data"].clone()).await;
                     match res {
                         Ok(_data) => {
                             log!("data submitted!");
-                            state.set("感谢您的提交 ^ ^");
+                            state.set("数据提交成功");
+                            alert("请在任意终端按 C 复制");
                         }
                         Err(err) => {
                             log!(err.to_string());
-                            state.set("服务器异常");
+                            router.push_route("/", None, None);
                         }
                     }
                 });
             },
             prevent_default: "onsubmit",
-            style { [include_str!("../../assets/data.css")] }
+            //style { [include_str!("../../assets/data.css")] }
             h1 {"{state}"}
 
             LabelInput{

@@ -3,6 +3,7 @@ use crate::{
     components::elements::label_input::LabelInput,
 };
 use dioxus::{events::FormEvent, prelude::*};
+use dioxus_router::use_router;
 use gloo::console::*;
 
 #[allow(non_snake_case)]
@@ -36,7 +37,7 @@ pub fn Login(cx: Scope) -> Element {
         });
     };
     cx.render(rsx! {
-        style { [include_str!("../../assets/login.css")] }
+        //style { [include_str!("../../assets/login.css")] }
         div {
             h1 { "Login" }
             form {

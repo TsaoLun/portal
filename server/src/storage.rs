@@ -110,7 +110,13 @@ fn validate(ctx: &Context<'_>) -> Result<(), FieldError> {
             &DecodingKey::from_secret(env::var("JWT_KEY").unwrap().as_bytes()),
             &Validation::new(Algorithm::HS512),
         ) {
-            Ok(_) => Ok(()),
+            Ok(e) => {
+                if e.claims.exp < Utc::now().timestamp_millis() {
+                    Err(FieldError::from(format!("ExpiredToken")))
+                } else {
+                    Ok(())
+                }
+            }
             Err(e) => {
                 println!("{:?}", e);
                 Err(FieldError::from(format!("InvalidToken")))
