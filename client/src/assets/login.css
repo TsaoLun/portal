@@ -1,8 +1,4 @@
 div {
-    display: grid;
-    place-items: center;
-    padding-right: 20px;
-    padding-top: 120px;
     text-align: center;
 }
 h1 {
@@ -25,7 +21,15 @@ div form input {
 @media screen and (orientation: landscape) {
     div {
         width: 95vmax;
-        height: 65vmin;
-        padding-top: 20px;
+        height: 60vmin;
+        padding-top: 7%;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    div {
+        width: 95vmin;
+        height: 60vmax;
+        padding-top: 35%;
     }
 }
