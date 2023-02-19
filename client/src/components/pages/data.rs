@@ -60,7 +60,7 @@ pub fn Data(cx: Scope) -> Element {
                 });
             },
             prevent_default: "onsubmit",
-            //style { [include_str!("../../assets/data.css")] }
+            style { include_str!("../../assets/data.css") }
             h1 {"{state}"}
 
             LabelInput{

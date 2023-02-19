@@ -37,7 +37,7 @@ pub fn Login(cx: Scope) -> Element {
         });
     };
     cx.render(rsx! {
-        //style { [include_str!("../../assets/login.css")] }
+        style { include_str!("../../assets/login.css") }
         div {
             h1 { "Login" }
             form {
