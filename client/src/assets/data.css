@@ -1,16 +1,12 @@
 form {
     text-align: center;
-    padding-right: 25px;
-}
-h1 {
-    margin-top: 100px;
 }
 .submit {
     width: 80px;
     height: 40px;
     font-size: medium;
     border-radius: 0px;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 .copy {
     width: 40px;
@@ -18,4 +14,26 @@ h1 {
     font-size: medium;
     border-radius: 0px;
     margin-left: 10px;
+}
+div form input {
+    width: 280px;
+}
+div form label {
+    width: 0px;
+}
+
+@media screen and (orientation: portrait) {
+    form {
+        width: 95vmin;
+        height: 65vmax;
+        padding-top: 70%;
+    }
+}
+
+@media screen and (orientation: landscape) {
+    form {
+        width: 95vmax;
+        height: 65vmin;
+        padding-top: 10%;
+    }
 }

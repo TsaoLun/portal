@@ -11,6 +11,8 @@ pub struct Query;
 
 pub type Storage = Arc<Mutex<Slab<String>>>;
 
+const EXP: i64 = 7 * 24 * 60 * 60 * 1000;
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Token {
     pub token: String,
@@ -44,7 +46,7 @@ impl Query {
             let now = Utc::now().timestamp_millis();
             let claims = Claims {
                 user: username,
-                exp: now + 180000,
+                exp: now + EXP,
                 iat: now,
             };
             let key = env::var("JWT_KEY").unwrap();

@@ -36,5 +36,9 @@ pub async fn get_query(request: RequestBuilder) -> Result<String, Box<dyn Error>
     let request_body = Get::build_query(get::Variables);
     let response_body: Response<get::ResponseData> =
         request.json(&request_body).send().await?.json().await?;
+    if response_body.errors.is_some() {
+        let err = response_body.errors.unwrap().get(0).unwrap().to_string();
+        return Err(err.into());
+    }
     Ok(response_body.data.expect_throw("response data err").get)
 }

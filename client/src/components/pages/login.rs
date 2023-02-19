@@ -4,7 +4,7 @@ use crate::{
 };
 use dioxus::{events::FormEvent, prelude::*};
 use dioxus_router::use_router;
-use gloo::console::*;
+use gloo::{console::*, dialogs::alert};
 
 #[allow(non_snake_case)]
 pub fn Login(cx: Scope) -> Element {
@@ -24,14 +24,16 @@ pub fn Login(cx: Scope) -> Element {
                 Ok(ok) => {
                     if ok {
                         log!("Login successful!");
-                        router.push_route("/data", None, None);
+                        router.push_route("/", None, None);
                     } else {
                         log!("login fail.");
+                        alert("账号密码有误");
                     }
                 }
                 //Handle any errors from the fetch here
                 Err(_err) => {
                     log!("Login failed - you need a login server running on 127.0.0.1:8080.");
+                    alert("服务器异常");
                 }
             }
         });
