@@ -1,4 +1,7 @@
-use gloo::{storage::{LocalStorage, Storage}, utils::window};
+use gloo::{
+    storage::{LocalStorage, Storage},
+    utils::window,
+};
 use lazy_static::lazy_static;
 use reqwest::{Client, RequestBuilder};
 
@@ -17,7 +20,15 @@ pub fn init_request() -> Client {
 }
 
 pub fn init_url() -> String {
-    format!("http://{}", window().location().hostname().unwrap().replace("http://", "") + PORT)
+    format!(
+        "http://{}",
+        window()
+            .location()
+            .hostname()
+            .unwrap()
+            .replace("http://", "")
+            + PORT
+    )
 }
 
 pub fn request() -> RequestBuilder {

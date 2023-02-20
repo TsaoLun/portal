@@ -11,8 +11,6 @@ async-graphql-actix-web="5.0.6"
 actix-web = { version = "4.3.0", default-features = false, features = ["macros"] }
 actix-cors = "0.6.4"
 futures-util = "0.3.25"
-async-stream = "0.3.3"
-futures-timer = "3.0.2"
 slab="0.4.7"
 dotenv="0.15.0"
 jsonwebtoken="8.2.0"

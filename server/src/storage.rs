@@ -42,7 +42,9 @@ impl Query {
         username: String,
         password: String,
     ) -> FieldResult<TokenResponse> {
-        if username == env::var("PORTAL_USERNAME").unwrap() && password == env::var("PORTAL_PASSWORD").unwrap() {
+        if username == env::var("PORTAL_USERNAME").unwrap()
+            && password == env::var("PORTAL_PASSWORD").unwrap()
+        {
             let now = Utc::now().timestamp_millis();
             let claims = Claims {
                 user: username,
