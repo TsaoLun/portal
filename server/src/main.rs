@@ -10,7 +10,7 @@ use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscripti
 use dotenv::dotenv;
 use storage::Token;
 
-const SERVER_URL: &str = "127.0.0.1:8000";
+const SERVER_URL: &str = "0.0.0.0:8000";
 
 async fn index(
     schema: web::Data<DataSchema>,
