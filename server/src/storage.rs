@@ -42,14 +42,14 @@ impl Query {
         username: String,
         password: String,
     ) -> FieldResult<TokenResponse> {
-        if username == env::var("USERNAME").unwrap() && password == env::var("PASSWORD").unwrap() {
+        if username == env::var("PORTAL_USERNAME").unwrap() && password == env::var("PORTAL_PASSWORD").unwrap() {
             let now = Utc::now().timestamp_millis();
             let claims = Claims {
                 user: username,
                 exp: now + EXP,
                 iat: now,
             };
-            let key = env::var("JWT_KEY").unwrap();
+            let key = env::var("PORTAL_JWT_KEY").unwrap();
             let key = key.as_bytes();
             let header = Header {
                 alg: Algorithm::HS512,
@@ -109,7 +109,7 @@ fn validate(ctx: &Context<'_>) -> Result<(), FieldError> {
     if let Some(token) = token {
         match decode::<Claims>(
             &token.token,
-            &DecodingKey::from_secret(env::var("JWT_KEY").unwrap().as_bytes()),
+            &DecodingKey::from_secret(env::var("PORTAL_JWT_KEY").unwrap().as_bytes()),
             &Validation::new(Algorithm::HS512),
         ) {
             Ok(e) => {
