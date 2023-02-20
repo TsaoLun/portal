@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use crate::{
     api::{data, request},
     components::elements::label_input::LabelInput,
@@ -6,7 +8,7 @@ use dioxus::{
     events::{FormEvent, MouseEvent},
     prelude::*,
 };
-use dioxus_router::use_router;
+use dioxus_router::{use_router, RouterService};
 use gloo::{console::*, dialogs::alert};
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlDocument, HtmlTextAreaElement};
@@ -17,34 +19,11 @@ pub fn Data(cx: Scope) -> Element {
     let router = use_router(&cx);
     let onclick = move |e: MouseEvent| {
         e.stop_propagation();
-        let router = router.clone();
-        cx.spawn(async move {
-            let data = data::get_query(request()).await;
-            match data {
-                Ok(data) => {
-                    let document = web_sys::window()
-                        .unwrap()
-                        .document()
-                        .unwrap()
-                        .dyn_into::<HtmlDocument>()
-                        .unwrap();
-                    let element = document
-                        .create_element("textarea")
-                        .unwrap()
-                        .unchecked_into::<HtmlTextAreaElement>();
-                    let body = document.body().unwrap();
-                    body.append_with_node_1(&element).unwrap();
-                    element.set_text_content(Some(&data));
-                    element.select();
-                    document.exec_command("copy").unwrap();
-                    body.remove_child(&element).unwrap();
-                }
-                Err(_) => {
-                    alert("登录过期，请重新登录");
-                    router.push_route("/login", None, None);
-                }
-            }
-        });
+        copy_data(cx, router.clone());
+    };
+    let ontouch = move |e: TouchEvent| {
+        e.stop_propagation();
+        copy_data(cx, router.clone());
     };
     cx.render(rsx! {
         form {
@@ -77,6 +56,7 @@ pub fn Data(cx: Scope) -> Element {
             }
             button {
                 onclick: onclick,
+                ontouchstart: ontouch,
                 prevent_default: "onclick",
                 class:"copy",
                 "C"
@@ -90,4 +70,34 @@ pub fn Data(cx: Scope) -> Element {
 
         }
     })
+}
+
+fn copy_data(cx: Scope, router: Rc<RouterService>) {
+    cx.spawn(async move {
+        let data = data::get_query(request()).await;
+        match data {
+            Ok(data) => {
+                let document = web_sys::window()
+                    .unwrap()
+                    .document()
+                    .unwrap()
+                    .dyn_into::<HtmlDocument>()
+                    .unwrap();
+                let element = document
+                    .create_element("textarea")
+                    .unwrap()
+                    .unchecked_into::<HtmlTextAreaElement>();
+                let body = document.body().unwrap();
+                body.append_with_node_1(&element).unwrap();
+                element.set_text_content(Some(&data));
+                element.select();
+                document.exec_command("copy").unwrap();
+                body.remove_child(&element).unwrap();
+            }
+            Err(_) => {
+                alert("登录过期，请重新登录");
+                router.push_route("/login", None, None);
+            }
+        }
+    });
 }
