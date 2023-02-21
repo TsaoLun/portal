@@ -6,17 +6,16 @@ COPY . .
 
 #for chinese network
 RUN set -x; \
-    APT_CONF='/etc/apt/sources.list'; \
     CARGO_CONF='/root/.cargo/config'; \
     BASHRC='/root/.bashrc' \
     && mkdir /root/.cargo \
-    && echo 'export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static' >> $BASHRC \
-    && echo 'export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup' >> $BASHRC \
+    && echo 'export RUSTUP_DIST_SERVER=https://rsproxy.cn' >> $BASHRC \
+    && echo 'export RUSTUP_UPDATE_ROOT=https://rsproxy.cn/rustup' >> $BASHRC \
     && touch $CARGO_CONF \
     && echo '[source.crates-io]' > $CARGO_CONF \
-    && echo "replace-with = 'ustc'" >> $CARGO_CONF \
-    && echo '[source.ustc]' >> $CARGO_CONF \
-    && echo 'registry = "git://mirrors.ustc.edu.cn/crates.io-index"' >> $CARGO_CONF \
+    && echo "replace-with = 'rsproxy'" >> $CARGO_CONF \
+    && echo '[source.rsproxy]' >> $CARGO_CONF \
+    && echo 'registry = "https://rsproxy.cn/crates.io-index"' >> $CARGO_CONF \
     && echo '[net]' >> $CARGO_CONF \
     && echo 'git-fetch-with-cli = true' >> $CARGO_CONF
 
