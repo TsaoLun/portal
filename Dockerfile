@@ -9,7 +9,7 @@ RUN set -x; \
     APT_CONF='/etc/apt/sources.list'; \
     CARGO_CONF='/root/.cargo/config'; \
     BASHRC='/root/.bashrc' \
-    && mkdir /root/.cargo
+    && mkdir /root/.cargo \
     && echo 'export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static' >> $BASHRC \
     && echo 'export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup' >> $BASHRC \
     && touch $CARGO_CONF \
