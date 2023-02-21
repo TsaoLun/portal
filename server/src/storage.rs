@@ -11,7 +11,7 @@ pub struct Query;
 
 pub type Storage = Arc<Mutex<Slab<String>>>;
 
-const EXP: i64 = 7 * 24 * 60 * 60 * 1000;
+const EXP: i64 = 7 * 24 * 60 * 60;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Token {
@@ -45,7 +45,7 @@ impl Query {
         if username == env::var("PORTAL_USERNAME").unwrap()
             && password == env::var("PORTAL_PASSWORD").unwrap()
         {
-            let now = Utc::now().timestamp_millis();
+            let now = Utc::now().timestamp();
             let claims = Claims {
                 user: username,
                 exp: now + EXP,
@@ -114,19 +114,13 @@ fn validate(ctx: &Context<'_>) -> Result<(), FieldError> {
             &DecodingKey::from_secret(env::var("PORTAL_JWT_KEY").unwrap().as_bytes()),
             &Validation::new(Algorithm::HS512),
         ) {
-            Ok(e) => {
-                if e.claims.exp < Utc::now().timestamp_millis() {
-                    Err(FieldError::from(format!("ExpiredToken")))
-                } else {
-                    Ok(())
-                }
-            }
+            Ok(_e) => Ok(()),
             Err(e) => {
                 println!("{:?}", e);
-                Err(FieldError::from(format!("InvalidToken")))
+                Err(FieldError::from(format!("ExpiredToken")))
             }
         }
     } else {
-        Err(FieldError::from(format!("InvalidFormat")))
+        Err(FieldError::from(format!("InvalidToken")))
     }
 }
