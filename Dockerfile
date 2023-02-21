@@ -4,6 +4,20 @@ WORKDIR /usr/src/portal
 
 COPY . .
 
+RUN mkdir -p $HOME/.cargo
+
+RUN	echo '[source.crates-io]' > $HOME/.cargo/config
+
+RUN	echo 'replace-with = "rsproxy"' >> $HOME/.cargo/config
+
+RUN	echo '[source.rsproxy]' >> $HOME/.cargo/config
+
+RUN	echo 'registry = "https://rsproxy.cn/crates.io-index"' >> $HOME/.cargo/config
+
+RUN	echo '[net]' >> $HOME/.cargo/config
+
+RUN	echo 'git-fetch-with-cli = true' >> $HOME/.cargo/config
+
 RUN cd /usr/src/portal/server && cargo install --path .
 
 RUN cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo install trunk  && trunk build --release
