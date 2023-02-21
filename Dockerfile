@@ -4,19 +4,20 @@ WORKDIR /usr/src/portal
 
 COPY . .
 
-RUN mkdir -p $HOME/.cargo
-
-RUN	echo '[source.crates-io]' > $HOME/.cargo/config
-
-RUN	echo 'replace-with = "rsproxy"' >> $HOME/.cargo/config
-
-RUN	echo '[source.rsproxy]' >> $HOME/.cargo/config
-
-RUN	echo 'registry = "https://rsproxy.cn/crates.io-index"' >> $HOME/.cargo/config
-
-RUN	echo '[net]' >> $HOME/.cargo/config
-
-RUN	echo 'git-fetch-with-cli = true' >> $HOME/.cargo/config
+#for chinese network
+RUN set -x; \
+    APT_CONF='/etc/apt/sources.list'; \
+    CARGO_CONF='/root/.cargo/config'; \
+    BASHRC='/root/.bashrc' \
+    && echo 'export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static' >> $BASHRC \
+    && echo 'export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup' >> $BASHRC \
+    && touch $CARGO_CONF \
+    && echo '[source.crates-io]' > $CARGO_CONF \
+    && echo "replace-with = 'ustc'" >> $CARGO_CONF \
+    && echo '[source.ustc]' >> $CARGO_CONF \
+    && echo 'registry = "git://mirrors.ustc.edu.cn/crates.io-index"' >> $CARGO_CONF \
+    && echo '[net]' >> $CARGO_CONF \
+    && echo 'git-fetch-with-cli = true' >> $CARGO_CONF
 
 RUN cd /usr/src/portal/server && cargo install --path .
 
