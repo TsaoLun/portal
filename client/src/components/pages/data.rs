@@ -16,14 +16,15 @@ use web_sys::{HtmlDocument, HtmlTextAreaElement};
 #[allow(non_snake_case)]
 pub fn Data(cx: Scope) -> Element {
     let state = use_state(&cx, || "请输入，或按 C 复制");
+    let copied_data = use_state(&cx, || "".to_string());
     let router = use_router(&cx);
     let onclick = move |e: MouseEvent| {
         e.stop_propagation();
-        copy_data(cx, router.clone());
+        copy_data(cx, copied_data.clone(),router.clone());
     };
     let ontouch = move |e: TouchEvent| {
         e.stop_propagation();
-        copy_data(cx, router.clone());
+        copy_data(cx, copied_data.clone(),router.clone());
     };
     cx.render(rsx! {
         form {
@@ -72,27 +73,16 @@ pub fn Data(cx: Scope) -> Element {
     })
 }
 
-fn copy_data(cx: Scope, router: Rc<RouterService>) {
+fn copy_data(cx: Scope, copied_data: UseState<String>, router: Rc<RouterService>) {
+    if copied_data.get() != "" {
+        portal(copied_data.get().to_string());
+    }
     cx.spawn(async move {
         let data = data::get_query(request()).await;
         match data {
             Ok(data) => {
-                let document = web_sys::window()
-                    .unwrap()
-                    .document()
-                    .unwrap()
-                    .dyn_into::<HtmlDocument>()
-                    .unwrap();
-                let element = document
-                    .create_element("textarea")
-                    .unwrap()
-                    .unchecked_into::<HtmlTextAreaElement>();
-                let body = document.body().unwrap();
-                body.append_with_node_1(&element).unwrap();
-                element.set_text_content(Some(&data));
-                element.select();
-                document.exec_command("copy").unwrap();
-                body.remove_child(&element).unwrap();
+                portal(data.to_string());
+                copied_data.set(data);
             }
             Err(_) => {
                 alert("登录过期，请重新登录");
@@ -100,4 +90,23 @@ fn copy_data(cx: Scope, router: Rc<RouterService>) {
             }
         }
     });
+}
+
+fn portal(d: String) {
+    let document = web_sys::window()
+        .unwrap()
+        .document()
+        .unwrap()
+        .dyn_into::<HtmlDocument>()
+        .unwrap();
+    let element = document
+        .create_element("textarea")
+        .unwrap()
+        .unchecked_into::<HtmlTextAreaElement>();
+    let body = document.body().unwrap();
+    body.append_with_node_1(&element).unwrap();
+    element.set_text_content(Some(&d));
+    element.select();
+    document.exec_command("copy").unwrap();
+    body.remove_child(&element).unwrap();
 }
