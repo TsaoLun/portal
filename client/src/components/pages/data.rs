@@ -57,6 +57,7 @@ pub fn Data(cx: Scope) -> Element {
             button {
                 onclick: onclick,
                 ontouchstart: ontouch,
+                prevent_default: "onclick",
                 class:"copy",
                 "C"
             }
