@@ -21,10 +21,12 @@ pub fn Data(cx: Scope) -> Element {
     let onclick = move |e: MouseEvent| {
         e.stop_propagation();
         copy_data(cx, copied_data.clone(),router.clone());
+        state.set("复制成功");
     };
     let ontouch = move |e: TouchEvent| {
         e.stop_propagation();
         copy_data(cx, copied_data.clone(),router.clone());
+        state.set("复制成功");
     };
     cx.render(rsx! {
         form {
