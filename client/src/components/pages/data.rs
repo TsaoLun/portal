@@ -45,7 +45,7 @@ pub fn Data(cx: Scope) -> Element {
                 } else if cp.len() <= 2 {
                     ("复制成功:", cp.len(), "")
                 } else if cp.len() <= 4 {
-                    ("复制成功:", 2, if cp.len() == 3 {"*"} else {"**"})
+                    ("复制成功:", 2, if cp.len() == 3 { "*" } else { "**" })
                 } else {
                     ("复制成功:", 2, "**...")
                 }
@@ -107,9 +107,15 @@ pub fn Data(cx: Scope) -> Element {
     })
 }
 
-fn copy_data(cx: Scope, (copied_data, init_data): (UseState<String>, UseState<String>), router: Rc<RouterService>) {
+fn copy_data(
+    cx: Scope,
+    (copied_data, init_data): (UseState<String>, UseState<String>),
+    router: Rc<RouterService>,
+) {
     if copied_data.get() == "" {
         portal(init_data.get().into());
+    } else {
+        portal(copied_data.get().into());
     }
     cx.spawn(async move {
         update_copied_data(copied_data, router).await;
