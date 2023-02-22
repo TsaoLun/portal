@@ -15,23 +15,56 @@ use web_sys::{HtmlDocument, HtmlTextAreaElement};
 
 #[allow(non_snake_case)]
 pub fn Data(cx: Scope) -> Element {
-    let state = use_state(&cx, || "请输入，或按 C 复制");
-    let copied_data = use_state(&cx, || "".to_string());
-    let router = use_router(&cx);
+    let router = use_router(cx);
+    let state = use_state(cx, || "请输入，或按 C 复制".to_string());
+    let copied_data = use_state(cx, || "".to_string());
+    let init_data = use_state(cx, || "".to_string());
+    use_effect(cx, (), |_| {
+        to_owned![init_data, router];
+        async move {
+            let data = data::get_query(request()).await;
+            match data {
+                Ok(data) => {
+                    init_data.set(data);
+                }
+                Err(_) => {
+                    alert("登录过期，请重新登录");
+                    router.push_route("/login", None, None);
+                }
+            }
+        }
+    }); // 提供初始化
+    use_effect(cx, copied_data, |_| {
+        to_owned![state, copied_data];
+        async move {
+            let cp: Vec<char> = copied_data.chars().clone().collect();
+            let (desc, len, ends) = {
+                log!(cp.len().to_string());
+                if cp.len() == 0 {
+                    ("", 0, "")
+                } else if cp.len() <= 2 {
+                    ("复制成功:", cp.len(), "")
+                } else if cp.len() <= 4 {
+                    ("复制成功:", 2, if cp.len() == 3 {"*"} else {"**"})
+                } else {
+                    ("复制成功:", 2, "**...")
+                }
+            };
+            if len != 0 {
+                let data = cp[0..len].iter().collect::<String>();
+                let show_success = format!("{} {}{}", desc, data, ends);
+                state.set(show_success);
+            }
+        }
+    });
     let onclick = move |e: MouseEvent| {
         e.stop_propagation();
-        copy_data(cx, copied_data.clone(),router.clone());
-        state.set("复制成功");
-    };
-    let ontouch = move |e: TouchEvent| {
-        e.stop_propagation();
-        copy_data(cx, copied_data.clone(),router.clone());
-        state.set("复制成功");
+        copy_data(cx, (copied_data.clone(), init_data.clone()), router.clone());
     };
     cx.render(rsx! {
         form {
-            oninput: |_| state.set("输入中..."),
-            onchange: |_| state.set("请记得提交~"),
+            oninput: |_| state.set("输入中...".into()),
+            onchange: |_| state.set("请记得提交~".into()),
             onsubmit: move |e: FormEvent| {
                 let state = state.clone();
                 let router = router.clone();
@@ -40,7 +73,7 @@ pub fn Data(cx: Scope) -> Element {
                     match res {
                         Ok(_data) => {
                             log!("data submitted!");
-                            state.set("在任意终端按 C 复制");
+                            state.set("在任意终端按 C 复制".into());
                         }
                         Err(err) => {
                             log!(err.to_string());
@@ -59,7 +92,6 @@ pub fn Data(cx: Scope) -> Element {
             }
             button {
                 onclick: onclick,
-                ontouchstart: ontouch,
                 prevent_default: "onclick",
                 class:"copy",
                 "C"
@@ -75,23 +107,27 @@ pub fn Data(cx: Scope) -> Element {
     })
 }
 
-fn copy_data(cx: Scope, copied_data: UseState<String>, router: Rc<RouterService>) {
-    if copied_data.get() != "" {
-        portal(copied_data.get().to_string());
+fn copy_data(cx: Scope, (copied_data, init_data): (UseState<String>, UseState<String>), router: Rc<RouterService>) {
+    if copied_data.get() == "" {
+        portal(init_data.get().into());
     }
     cx.spawn(async move {
-        let data = data::get_query(request()).await;
-        match data {
-            Ok(data) => {
-                portal(data.to_string());
-                copied_data.set(data);
-            }
-            Err(_) => {
-                alert("登录过期，请重新登录");
-                router.push_route("/login", None, None);
-            }
-        }
+        update_copied_data(copied_data, router).await;
     });
+}
+
+async fn update_copied_data(copied_data: UseState<String>, router: Rc<RouterService>) {
+    let data = data::get_query(request()).await;
+    match data {
+        Ok(data) => {
+            portal(data.to_string());
+            copied_data.set(data);
+        }
+        Err(_) => {
+            alert("登录过期，请重新登录");
+            router.push_route("/login", None, None);
+        }
+    }
 }
 
 fn portal(d: String) {
