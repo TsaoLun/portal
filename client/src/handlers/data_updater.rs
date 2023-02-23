@@ -31,17 +31,21 @@ pub fn copy_data(
         }
     });
 }
-pub fn submit_data(cx: Scope, (state, data): (UseState<String>, String), router: Rc<RouterService>){
-            cx.spawn(async move {
-            let res = data::set_mutation(request(), data).await;
-            match res {
-                Ok(_data) => {
-                    state.set("在任意终端按 C 复制".into());
-                }
-                Err(_) => {
-                    alert("登录过期，请重新登录");
-                    router.push_route("/login", None, None);
-                }
+pub fn submit_data(
+    cx: Scope,
+    (state, data): (UseState<String>, String),
+    router: Rc<RouterService>,
+) {
+    cx.spawn(async move {
+        let res = data::set_mutation(request(), data).await;
+        match res {
+            Ok(_data) => {
+                state.set("在任意终端按 C 复制".into());
             }
-        });
+            Err(_) => {
+                alert("登录过期，请重新登录");
+                router.push_route("/login", None, None);
+            }
+        }
+    });
 }

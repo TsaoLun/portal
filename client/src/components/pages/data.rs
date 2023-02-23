@@ -49,7 +49,11 @@ pub fn Data(cx: Scope) -> Element {
         copy_data(cx, (copied_data.clone(), init_data.clone()), router.clone());
     };
     let onsubmit = move |e: FormEvent| {
-        submit_data(cx, (state.clone(), e.values["data"].clone()), router.clone());
+        submit_data(
+            cx,
+            (state.clone(), e.values["data"].clone()),
+            router.clone(),
+        );
     };
     let ontouchstart = move |_| {
         copy_data(cx, (copied_data.clone(), init_data.clone()), router.clone());
