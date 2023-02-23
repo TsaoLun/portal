@@ -57,26 +57,20 @@ pub fn Data(cx: Scope) -> Element {
             onsubmit: onsubmit,
             prevent_default: "onsubmit",
             style { include_str!("../../assets/data.css") }
-            h1 {"{state}"}
+            h1 { "{state}" }
 
-            LabelInput{
-                name:"", id:"data"
-            }
+            LabelInput { name: "", id: "data" }
             button {
                 onclick: onclick,
                 ontouchstart: ontouchstart,
                 ontouchend: ontouchend,
                 prevent_default: "onclick",
-                class:"copy",
+                class: "copy",
                 "C"
             }
 
             br {}
-            button {
-            class:"submit",
-                "提交"
-            }
-
+            button { class: "submit", "提交" }
         }
     })
 }

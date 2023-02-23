@@ -19,12 +19,10 @@ pub fn Login(cx: Scope) -> Element {
         style { include_str!("../../assets/login.css") }
         div {
             h1 { "Login" }
-            form {
-                onsubmit: onsubmit,
-                prevent_default: "onsubmit", // Prevent the default behavior of <form> to post
-                LabelInput{name: "账号", id: "username"}
+            form { onsubmit: onsubmit, prevent_default: "onsubmit",
+                LabelInput { name: "账号", id: "username" }
                 br {}
-                LabelInput{self_type: "password", name: "密码", id: "password"}
+                LabelInput { self_type: "password", name: "密码", id: "password" }
                 br {}
                 button { "登陆" }
             }

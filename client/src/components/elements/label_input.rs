@@ -31,12 +31,11 @@ pub fn LabelInput<'a>(cx: Scope<'a, SelfProps<'a>>) -> Element {
     }
     "#;
     cx.render(rsx! {
-        style {"{style}"}
-        label {"{cx.props.name}"}
-        input {
-            r#type: format_args!{"{}", input_type},
-            id: format_args!{"{}", cx.props.id},
-            name: format_args!{"{}", cx.props.id}
-        }
-    })
+        style { "{style}" }
+        label { "{cx.props.name}" }
+        input { 
+            r#type: format_args! { "{}", input_type }, 
+            id: format_args! { "{}", cx.props.id }, 
+            name: format_args! { "{}", cx.props.id } }
+        })
 }
