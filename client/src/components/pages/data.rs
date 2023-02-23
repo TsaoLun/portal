@@ -1,17 +1,15 @@
-use std::rc::Rc;
-
 use crate::{
     api::{data, request},
     components::elements::label_input::LabelInput,
+    handlers::data_updater::copy_data,
+    utils::str_tools::cut_to_show,
 };
 use dioxus::{
     events::{FormEvent, MouseEvent},
     prelude::*,
 };
-use dioxus_router::{use_router, RouterService};
+use dioxus_router::use_router;
 use gloo::{console::*, dialogs::alert};
-use wasm_bindgen::JsCast;
-use web_sys::{HtmlDocument, HtmlTextAreaElement};
 
 #[allow(non_snake_case)]
 pub fn Data(cx: Scope) -> Element {
@@ -37,23 +35,8 @@ pub fn Data(cx: Scope) -> Element {
     use_effect(cx, copied_data, |_| {
         to_owned![state, copied_data];
         async move {
-            let cp: Vec<char> = copied_data.chars().clone().collect();
-            let (desc, len, ends) = {
-                log!(cp.len().to_string());
-                if cp.len() == 0 {
-                    ("", 0, "")
-                } else if cp.len() <= 2 {
-                    ("复制成功:", cp.len(), "")
-                } else if cp.len() <= 4 {
-                    ("复制成功:", 2, if cp.len() == 3 { "*" } else { "**" })
-                } else {
-                    ("复制成功:", 2, "**...")
-                }
-            };
-            if len != 0 {
-                let data = cp[0..len].iter().collect::<String>();
-                let show_success = format!("{} {}{}", desc, data, ends);
-                state.set(show_success);
+            if let Some(show_data) = cut_to_show(copied_data) {
+                state.set(show_data);
             }
         }
     });
@@ -105,52 +88,4 @@ pub fn Data(cx: Scope) -> Element {
 
         }
     })
-}
-
-fn copy_data(
-    cx: Scope,
-    (copied_data, init_data): (UseState<String>, UseState<String>),
-    router: Rc<RouterService>,
-) {
-    if copied_data.get() == "" {
-        portal(init_data.get().into());
-    } else {
-        portal(copied_data.get().into());
-    }
-    cx.spawn(async move {
-        update_copied_data(copied_data, router).await;
-    });
-}
-
-async fn update_copied_data(copied_data: UseState<String>, router: Rc<RouterService>) {
-    let data = data::get_query(request()).await;
-    match data {
-        Ok(data) => {
-            portal(data.to_string());
-            copied_data.set(data);
-        }
-        Err(_) => {
-            alert("登录过期，请重新登录");
-            router.push_route("/login", None, None);
-        }
-    }
-}
-
-fn portal(d: String) {
-    let document = web_sys::window()
-        .unwrap()
-        .document()
-        .unwrap()
-        .dyn_into::<HtmlDocument>()
-        .unwrap();
-    let element = document
-        .create_element("textarea")
-        .unwrap()
-        .unchecked_into::<HtmlTextAreaElement>();
-    let body = document.body().unwrap();
-    body.append_with_node_1(&element).unwrap();
-    element.set_text_content(Some(&d));
-    element.select();
-    document.exec_command("copy").unwrap();
-    body.remove_child(&element).unwrap();
 }
