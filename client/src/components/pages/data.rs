@@ -1,7 +1,6 @@
 use crate::{
-    api::{data, request},
     components::elements::label_input::LabelInput,
-    handlers::data_updater::{copy_data, submit_data},
+    handlers::data_updater::{copy_data, submit_data, first_cache},
     utils::str_tools::{cut_to_show, portal},
 };
 use dioxus::{
@@ -9,7 +8,6 @@ use dioxus::{
     prelude::*,
 };
 use dioxus_router::use_router;
-use gloo::dialogs::alert;
 
 #[allow(non_snake_case)]
 pub fn Data(cx: Scope) -> Element {
@@ -23,16 +21,7 @@ pub fn Data(cx: Scope) -> Element {
     use_effect(cx, (), |_| {
         to_owned![init_data, router];
         async move {
-            let data = data::get_query(request()).await;
-            match data {
-                Ok(data) => {
-                    init_data.set(data);
-                }
-                Err(_) => {
-                    alert("登录过期，请重新登录");
-                    router.push_route("/login", None, None);
-                }
-            }
+            first_cache(init_data, router)
         }
     });
     // watch copied data

@@ -49,3 +49,15 @@ pub fn submit_data(
         }
     });
 }
+pub async fn first_cache(init_data: UseState<String, >, router:Rc<RouterService>) {
+    let data = data::get_query(request()).await;
+    match data {
+        Ok(data) => {
+            init_data.set(data);
+        }
+        Err(_) => {
+            alert("登录过期，请重新登录");
+            router.push_route("/login", None, None);
+        }
+    }
+}
