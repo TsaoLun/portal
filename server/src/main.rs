@@ -1,4 +1,6 @@
 mod storage;
+use std::env;
+
 use crate::storage::*;
 use actix_cors::Cors;
 use actix_web::{
@@ -54,7 +56,12 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(schema.clone()))
-            .wrap(Cors::permissive()) //  生产环境请注释 Not recommended for production use.
+            .wrap(
+                Cors::default()
+                    .allow_any_header()
+                    .allowed_methods(vec!["POST"])
+                    .allowed_origin(&env::var("PORTAL_URL").unwrap_or("http://127.0.0.1:8080".to_string())),
+            ) //  生产环境请注释 Not recommended for production use.
             //.wrap(actix_web::middleware::Logger::default())
             .service(web::resource("/").guard(guard::Post()).to(index))
             .service(

@@ -14,7 +14,7 @@
 
 1. 设置 JWT_KEY 和用户密码：项目目录下创建 .env 文件，内容为： `PORTAL_JWT_KEY={任意JWT_KEY} PORTAL_USERNAME={你的用户名} PORTAL_PASSWORD={你的密码}`。
 
-2. 安装 Rust 环境和 WASM 工具 Trunk (cargo install trunk)，任意路径下执行 `rustup target add wasm32-unknown-unknown`。
+2. 安装 Cargo 环境和 WASM 工具 Trunk (`cargo install trunk`)，执行 `rustup target add wasm32-unknown-unknown`。
 
 3. 在 client 目录下执行 `trunk serve` 运行前端部分。
 
