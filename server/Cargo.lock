@@ -1250,6 +1250,7 @@ dependencies = [
  "dotenv",
  "futures-util",
  "jsonwebtoken",
+ "lazy_static",
  "serde",
  "slab",
 ]

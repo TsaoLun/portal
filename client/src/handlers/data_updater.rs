@@ -49,7 +49,7 @@ pub fn submit_data(
         }
     });
 }
-pub async fn first_cache(init_data: UseState<String, >, router:Rc<RouterService>) {
+pub async fn first_cache(init_data: UseState<String>, router: Rc<RouterService>) {
     let data = data::get_query(request()).await;
     match data {
         Ok(data) => {

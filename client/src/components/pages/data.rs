@@ -1,6 +1,6 @@
 use crate::{
     components::elements::label_input::LabelInput,
-    handlers::data_updater::{copy_data, submit_data, first_cache},
+    handlers::data_updater::{copy_data, first_cache, submit_data},
     utils::str_tools::{cut_to_show, portal},
 };
 use dioxus::{
@@ -20,9 +20,7 @@ pub fn Data(cx: Scope) -> Element {
     // init data
     use_effect(cx, (), |_| {
         to_owned![init_data, router];
-        async move {
-            first_cache(init_data, router)
-        }
+        async move { first_cache(init_data, router) }
     });
     // watch copied data
     use_effect(cx, copied_data, |_| {

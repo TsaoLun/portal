@@ -10,10 +10,17 @@ use actix_web::{
 use async_graphql::*;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
 use dotenv::dotenv;
+use lazy_static::lazy_static;
 use storage::Token;
 
-const SERVER_URL: &str = "0.0.0.0:8008";
-
+lazy_static! {
+    pub static ref SERVER_URL: String = init_url();
+}
+fn init_url() -> String {
+    env::var("SERVER_URL")
+        .unwrap_or("127.0.0.1:8008".to_string())
+        .replace("http://", "")
+}
 async fn index(
     schema: web::Data<DataSchema>,
     req: HttpRequest,
@@ -40,8 +47,8 @@ async fn index_graphiql() -> Result<HttpResponse> {
         .content_type("text/html; charset=utf-8")
         .body(
             http::GraphiQLSource::build()
-                .endpoint(&format!("http://{}", SERVER_URL))
-                .subscription_endpoint(&format!("ws://{}", SERVER_URL))
+                .endpoint(&format!("http://{}", SERVER_URL.to_string()))
+                .subscription_endpoint(&format!("ws://{}", SERVER_URL.to_string()))
                 .finish(),
         ))
 }
@@ -52,7 +59,7 @@ async fn main() -> std::io::Result<()> {
     let schema = Schema::build(Query, Mutation, EmptySubscription)
         .data(Storage::default())
         .finish();
-    println!("\n> server run on http://{}.", SERVER_URL);
+    println!("\n> server run at http://{}.", SERVER_URL.to_string());
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(schema.clone()))
@@ -60,7 +67,10 @@ async fn main() -> std::io::Result<()> {
                 Cors::default()
                     .allow_any_header()
                     .allowed_methods(vec!["POST"])
-                    .allowed_origin(&env::var("PORTAL_URL").unwrap_or("http://127.0.0.1:8080".to_string())),
+                    .allowed_origin(&format!("http://{}", SERVER_URL.to_string()))
+                    .allowed_origin(
+                        &env::var("PORTAL_URL").unwrap_or("http://127.0.0.1:8080".to_string()),
+                    ),
             ) //  生产环境请注释 Not recommended for production use.
             //.wrap(actix_web::middleware::Logger::default())
             .service(web::resource("/").guard(guard::Post()).to(index))
@@ -72,7 +82,7 @@ async fn main() -> std::io::Result<()> {
             )
             .service(web::resource("/").guard(guard::Get()).to(index_graphiql))
     })
-    .bind(SERVER_URL)?
+    .bind(SERVER_URL.to_string())?
     .run()
     .await
 }

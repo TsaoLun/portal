@@ -44,4 +44,3 @@ pub fn cut_to_show(text: UseState<String>) -> Option<String> {
         ))
     }
 }
-
