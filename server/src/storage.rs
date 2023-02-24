@@ -83,6 +83,9 @@ pub struct Mutation;
 impl Mutation {
     async fn set(&self, ctx: &Context<'_>, data: String) -> FieldResult<bool> {
         validate(ctx)?;
+        if data == "" {
+            return Err(FieldError::from("请输入有效内容!"));
+        }
         let mut storage = ctx.data_unchecked::<Storage>().lock().await;
         storage.clear();
         storage.insert(data);
@@ -117,10 +120,10 @@ fn validate(ctx: &Context<'_>) -> Result<(), FieldError> {
             Ok(_e) => Ok(()),
             Err(e) => {
                 println!("{:?}", e);
-                Err(FieldError::from(format!("ExpiredToken")))
+                Err(FieldError::from("ExpiredToken"))
             }
         }
     } else {
-        Err(FieldError::from(format!("InvalidToken")))
+        Err(FieldError::from("InvalidToken"))
     }
 }
