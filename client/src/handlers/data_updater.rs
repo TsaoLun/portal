@@ -42,8 +42,8 @@ pub fn submit_data(
             Ok(_data) => {
                 state.set("在任意终端按 C 复制".into());
             }
-            Err(_) => {
-                alert("登录过期，请重新登录");
+            Err(e) => {
+                alert(&e.to_string());
                 router.push_route("/login", None, None);
             }
         }

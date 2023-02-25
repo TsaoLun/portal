@@ -1,4 +1,6 @@
-use async_graphql::{Context, EmptySubscription, FieldError, FieldResult, Object, Schema};
+use async_graphql::{
+    Context, EmptySubscription, ErrorExtensions, FieldError, FieldResult, Object, Schema,
+};
 use chrono::Utc;
 use futures_util::lock::Mutex;
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
@@ -84,7 +86,8 @@ impl Mutation {
     async fn set(&self, ctx: &Context<'_>, data: String) -> FieldResult<bool> {
         validate(ctx)?;
         if data == "" {
-            return Err(FieldError::from("请输入有效内容!"));
+            return Err(FieldError::from("请输入有效内容!"))
+                .map_err(|err| err.extend_with(|_, e| e.set("code", "INVALID_INPUT")));
         }
         let mut storage = ctx.data_unchecked::<Storage>().lock().await;
         storage.clear();
