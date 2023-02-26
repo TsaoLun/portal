@@ -39,8 +39,10 @@ pub fn submit_data(
     cx.spawn(async move {
         let res = data::set_mutation(request(), data).await;
         match res {
-            Ok(_data) => {
-                state.set("在任意终端按 C 复制".into());
+            Ok(res) => {
+                
+                    state.set("在任意终端按 C 复制".into());
+           
             }
             Err(e) => {
                 alert(&e.to_string());
