@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use dioxus_router::RouterService;
-use gloo::dialogs::alert;
+use gloo::{dialogs::alert, console::log};
 use std::rc::Rc;
 
 use crate::{
@@ -39,14 +39,25 @@ pub fn submit_data(
     cx.spawn(async move {
         let res = data::set_mutation(request(), data).await;
         match res {
-            Ok(res) => {
-                
-                    state.set("在任意终端按 C 复制".into());
-           
-            }
+            Ok(res) => match res.0 {
+                None => state.set("在任意终端按 C 复制".into()),
+                Some(e) => {
+                    if let Some(code) = e.code {
+                        log!(code.as_str());
+                        match code.as_str() {
+                            "INVALID_TOKEN" | "EXPIRED_TOKEN" => {
+                                alert(&e.message);
+                                router.push_route("/login", None, None)
+                            }
+                            _ => alert(&e.message),
+                        }
+                    } else {
+                        alert(&e.message)
+                    }
+                }
+            },
             Err(e) => {
-                alert(&e.to_string());
-                router.push_route("/login", None, None);
+                alert(&e.to_string()); // handle error?
             }
         }
     });

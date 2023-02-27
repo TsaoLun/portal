@@ -123,10 +123,12 @@ fn validate(ctx: &Context<'_>) -> Result<(), FieldError> {
             Ok(_e) => Ok(()),
             Err(e) => {
                 println!("{:?}", e);
-                Err(FieldError::from("ExpiredToken"))
+                Err(FieldError::from("登录过期，请重新登陆!"))
+                    .map_err(|err| err.extend_with(|_, e| e.set("code", "EXPIRED_TOKEN")))
             }
         }
     } else {
-        Err(FieldError::from("InvalidToken"))
+        Err(FieldError::from("无效 Token"))
+            .map_err(|err| err.extend_with(|_, e| e.set("code", "INVALID_TOKEN")))
     }
 }

@@ -1,3 +1,4 @@
+use gloo::console::log;
 use graphql_client::{GraphQLQuery, Response};
 use reqwest::RequestBuilder;
 use std::error::Error;
@@ -21,34 +22,25 @@ pub async fn set_mutation(
     let request_body = Set::build_query(set::Variables { data });
     let response_body: Response<set::ResponseData> =
         request.json(&request_body).send().await?.json().await?;
-    if response_body.errors.is_some() {
-        let err = response_body
-            .errors
-            .unwrap()
-            .get(0)
-            .unwrap()
-            .message
-            .to_string();
-        let ext_err = response_body
+    let s = response_body.errors.clone();
+    if s.is_some() {
+        let err = .unwrap().get(0).unwrap();
+        let ext_err = err
+            .clone()
             .extensions
             .and_then(|e| e.get("code").and_then(|code| Some(code.to_string())));
         return Ok(ApiResponse(Some(ErrData {
-            message: err.into(),
+            message: err.message.to_string(),
             code: ext_err.into(),
         })));
     }
-    match response_body.data {
-        Some(e) => match e.set {
-            true => Ok(ApiResponse(None)),
-            false => Ok(ApiResponse(Some(ErrData {
-                message: "服务器异常".into(),
-                code: None,
-            }))),
-        },
-        None => Ok(ApiResponse(Some(ErrData {
+    if response_body.data.and_then(|r| Some(r.set)) == Some(true) {
+        Ok(ApiResponse(None))
+    } else {
+        Ok(ApiResponse(Some(ErrData {
             message: "服务器异常".into(),
             code: None,
-        }))),
+        })))
     }
 }
 
