@@ -20,7 +20,9 @@ pub fn Data(cx: Scope) -> Element {
     // init data
     use_effect(cx, (), |_| {
         to_owned![init_data, router];
-        async move { first_cache(init_data, router) }
+        async move {
+            first_cache(init_data, router).await;
+        }
     });
     // watch copied data
     use_effect(cx, copied_data, |_| {
