@@ -43,9 +43,10 @@ pub fn submit_data(
                 None => state.set("在任意终端按 C 复制".into()),
                 Some(e) => {
                     if let Some(code) = e.code {
-                        log!(code.as_str());
+                        log!(code.as_str().len());
+                        log!("EXPIRED_TOKEN".len());
                         match code.as_str() {
-                            "INVALID_TOKEN" | "EXPIRED_TOKEN" => {
+                            "EXPIRED_TOKEN" => {
                                 alert(&e.message);
                                 router.push_route("/login", None, None)
                             }
