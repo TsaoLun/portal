@@ -20,30 +20,30 @@ pub fn copy_data(
     cx.spawn(async move {
         let data = data::get_query(request()).await;
         match data {
+            Err(_) => {
+                alert(SERVER_ERROR); // unexpect error
+            }
+
             Ok(data) => match data.data {
-                None => match data.err {
-                    None => {
-                        alert(SERVER_ERROR);
-                    }
-                    Some(e) => match e.code {
-                        None => alert(&e.message),
-                        Some(inner) => match inner.as_str() {
-                            "INVALID_TOKEN" | "EXPIRED_TOKEN" => {
-                                alert(&e.message);
-                                router.push_route("/login", None, None)
-                            }
-                            _ => alert(&e.message),
-                        },
-                    },
-                },
                 Some(e) => {
                     portal(e.clone());
                     copied_data.set(e);
                 }
+                None => match data.err {
+                    Some(e) => match e.code {
+                        Some(inner) => match inner.as_str() {
+                            "INVALID_TOKEN" | "EXPIRED_TOKEN" => {
+                                router.push_route("/login", None, None)
+                            }
+                            _ => alert(&e.message),
+                        },
+                        None => alert(&e.message),
+                    },
+                    None => {
+                        alert(SERVER_ERROR);
+                    }
+                },
             },
-            Err(_) => {
-                alert(SERVER_ERROR); // unexpect error
-            }
         }
     });
 }

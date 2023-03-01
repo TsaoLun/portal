@@ -3,7 +3,10 @@ use dioxus_router::RouterService;
 use gloo::dialogs::alert;
 use std::rc::Rc;
 
-use crate::{api::{login, request}, utils::api_response::SERVER_ERROR};
+use crate::{
+    api::{login, request},
+    utils::api_response::SERVER_ERROR,
+};
 
 pub fn submit_login(cx: Scope, (usernmae, password): (String, String), router: Rc<RouterService>) {
     cx.spawn(async move {
