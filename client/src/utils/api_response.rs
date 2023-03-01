@@ -19,3 +19,5 @@ pub fn get_err<T>(response: Response<T>) -> (String, Option<String>) {
     });
     (err.clone().message, ext_err)
 }
+
+pub const SERVER_ERROR: &str = "服务端异常";

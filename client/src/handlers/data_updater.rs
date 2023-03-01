@@ -5,7 +5,7 @@ use std::rc::Rc;
 
 use crate::{
     api::{data, request},
-    utils::str_tools::portal,
+    utils::{api_response::SERVER_ERROR, str_tools::portal},
 };
 pub fn copy_data(
     cx: Scope,
@@ -23,7 +23,7 @@ pub fn copy_data(
             Ok(data) => match data.data {
                 None => match data.err {
                     None => {
-                        alert("服务器异常");
+                        alert(SERVER_ERROR);
                     }
                     Some(e) => match e.code {
                         None => alert(&e.message),
@@ -41,8 +41,8 @@ pub fn copy_data(
                     copied_data.set(e);
                 }
             },
-            Err(e) => {
-                alert("服务器异常"); // unexpect error
+            Err(_) => {
+                alert(SERVER_ERROR); // unexpect error
             }
         }
     });
@@ -71,8 +71,8 @@ pub fn submit_data(
                     }
                 }
             },
-            Err(e) => {
-                alert("服务器异常"); // unexpect error
+            Err(_) => {
+                alert(SERVER_ERROR); // unexpect error
             }
         }
     });
@@ -99,7 +99,7 @@ pub async fn first_cache(init_data: UseState<String>, router: Rc<RouterService>)
             }
         }
         Err(e) => {
-            alert("服务器异常");
+            alert(SERVER_ERROR);
             //router.push_route("/login", None, None);
         }
     }

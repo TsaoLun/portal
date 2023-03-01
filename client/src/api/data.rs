@@ -2,7 +2,7 @@ use graphql_client::{GraphQLQuery, Response};
 use reqwest::RequestBuilder;
 use std::error::Error;
 
-use crate::utils::api_response::{get_err, ErrData, ResData};
+use crate::utils::api_response::{get_err, ErrData, ResData, SERVER_ERROR};
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -31,7 +31,7 @@ pub async fn set_mutation(
         Ok(None)
     } else {
         Ok(Some(ErrData {
-            message: "服务器异常".into(),
+            message: SERVER_ERROR.into(),
             code: None,
         }))
     }
@@ -68,7 +68,7 @@ pub async fn get_query(request: RequestBuilder) -> Result<ResData<String>, Box<d
         }),
         None => Ok(ResData {
             err: Some(ErrData {
-                message: "服务器异常".into(),
+                message: SERVER_ERROR.into(),
                 code: None,
             }),
             data: None,
