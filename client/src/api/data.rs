@@ -2,7 +2,7 @@ use graphql_client::{GraphQLQuery, Response};
 use reqwest::RequestBuilder;
 use std::error::Error;
 
-use crate::utils::api_response::{get_err, ApiResponse, ErrData, ResData};
+use crate::utils::api_response::{get_err, ErrData, ResData};
 
 #[derive(GraphQLQuery)]
 #[graphql(

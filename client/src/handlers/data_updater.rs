@@ -42,7 +42,7 @@ pub fn copy_data(
                 }
             },
             Err(e) => {
-                alert(&e.to_string()); // unexpect error
+                alert("服务器异常"); // unexpect error
             }
         }
     });
@@ -72,7 +72,7 @@ pub fn submit_data(
                 }
             },
             Err(e) => {
-                alert(&e.to_string()); // unexpect error
+                alert("服务器异常"); // unexpect error
             }
         }
     });
@@ -99,7 +99,7 @@ pub async fn first_cache(init_data: UseState<String>, router: Rc<RouterService>)
             }
         }
         Err(e) => {
-            alert(&e.to_string());
+            alert("服务器异常");
             //router.push_route("/login", None, None);
         }
     }
