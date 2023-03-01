@@ -98,7 +98,7 @@ pub async fn first_cache(init_data: UseState<String>, router: Rc<RouterService>)
                 }
             }
         }
-        Err(e) => {
+        Err(_) => {
             alert(SERVER_ERROR);
             //router.push_route("/login", None, None);
         }
