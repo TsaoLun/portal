@@ -4,7 +4,7 @@ use dioxus_router::use_router;
 
 #[allow(non_snake_case)]
 pub fn Login(cx: Scope) -> Element {
-    let router = use_router(&cx);
+    let router = use_router(cx);
     let onsubmit = move |evt: FormEvent| {
         submit_login(
             cx,

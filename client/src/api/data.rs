@@ -27,7 +27,7 @@ pub async fn set_mutation(
             code: data.1,
         }));
     }
-    if response_body.data.and_then(|r| Some(r.set)) == Some(true) {
+    if response_body.data.map(|r| r.set) == Some(true) {
         Ok(None)
     } else {
         Ok(Some(ErrData {

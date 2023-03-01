@@ -92,10 +92,8 @@ pub async fn first_cache(init_data: UseState<String>, router: Rc<RouterService>)
                     }
                     None => alert(&err.message),
                 }
-            } else {
-                if let Some(data) = data.data {
-                    init_data.set(data);
-                }
+            } else if let Some(data) = data.data {
+                init_data.set(data);
             }
         }
         Err(_) => {

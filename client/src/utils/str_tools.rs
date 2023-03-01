@@ -23,7 +23,7 @@ pub fn portal(text: String) {
 
 pub fn cut_to_show(text: UseState<String>) -> Option<String> {
     let vec: Vec<char> = text.chars().clone().collect();
-    if vec.len() == 0 {
+    if vec.is_empty() {
         None
     } else if vec.len() < 3 {
         Some(format!(
