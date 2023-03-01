@@ -37,7 +37,7 @@ pub fn copy_data(
                     },
                 },
                 Some(e) => {
-                    portal(e);
+                    portal(e.clone());
                     copied_data.set(e);
                 }
             },
@@ -81,41 +81,26 @@ pub async fn first_cache(init_data: UseState<String>, router: Rc<RouterService>)
     let data = data::get_query(request()).await;
     match data {
         Ok(data) => {
-            init_data.set(data.data);
-        }
-        Err(_) => {
-            alert("登录过期，请重新登录");
-            router.push_route("/login", None, None);
-        }
-    }
-}
-
-async fn copy_req(state_data: UseState<String>, router: Rc<RouterService>) {
-    let data = data::get_query(request()).await;
-    match data {
-        Ok(data) => match data.data {
-            None => match data.err {
-                None => {
-                    alert("服务器异常");
-                }
-                Some(e) => match e.code {
-                    None => alert(&e.message),
-                    Some(inner) => match inner.as_str() {
-                        "INVALID_TOKEN" | "EXPIRED_TOKEN" => {
-                            alert(&e.message);
+            if let Some(err) = data.err {
+                match err.code {
+                    Some(code) => {
+                        alert(&err.message);
+                        if (code.as_str() == "INVALID_TOKEN") || (code.as_str() == "EXPIRED_TOKEN")
+                        {
                             router.push_route("/login", None, None)
                         }
-                        _ => alert(&e.message),
-                    },
-                },
-            },
-            Some(e) => {
-                portal(e.clone());
-                state_data.set(e);
+                    }
+                    None => alert(&err.message),
+                }
+            } else {
+                if let Some(data) = data.data {
+                    init_data.set(data);
+                }
             }
-        },
+        }
         Err(e) => {
-            alert(&e.to_string()); // unexpect error
+            alert(&e.to_string());
+            //router.push_route("/login", None, None);
         }
     }
 }
