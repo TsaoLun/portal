@@ -1,4 +1,4 @@
-use graphql_client::Response;
+use graphql_client::Error;
 use thiserror::Error;
 
 pub struct ErrData {
@@ -11,27 +11,38 @@ pub struct ResData<T> {
     pub data: Option<T>,
 }
 
-pub fn get_err<T>(response: Response<T>) -> Result<(), AppError> {
-    let err = response.errors.map(||);
-    let err = err.get(0).unwrap();
-    let ext_err = err
-        .clone()
-        .extensions
-        .and_then(|e| e.get("code").map(|code| code.as_str().unwrap().to_string()));
-    // (err.clone().message, ext_err);
-    todo!()
+pub fn get_err(errors: &Vec<Error>) -> Result<(), AppError> {
+    match errors.get(0) {
+        Some(err) => {
+            let code = err
+                .extensions
+                .clone()
+                .map(|e| e.get("code"))
+                .and_then(|c| c);
+            if let Some(&cd) = code {
+                let code_str = cd.as_str().unwrap();
+                
+                return Err(AppError::SpecError(code_str.to_string()));
+            } else {
+                return Err(AppError::AnyError(err.message.to_string()));
+            }
+        }
+        None => Ok(()),
+    }
 }
 
 pub const SERVER_ERROR: &str = "服务端异常";
+pub const PARSER_ERROR: &str = "解析错误";
+pub const AUTH_ERROR: &str = "登录过期，请重新登录";
 
 #[derive(Error, Debug)]
 pub enum AppError {
     #[error("Network error occurred: {0}")]
     NetworkError(#[from] reqwest::Error),
     #[error("{0}")]
-    TokenError(String),
+    SpecError(String),
     #[error("{0}")]
-    Other(String),
+    AnyError(String),
 }
 
 pub type AppResult<T> = Result<T, AppError>;

@@ -5,7 +5,10 @@ use std::rc::Rc;
 
 use crate::{
     api::{data, request},
-    utils::{api_response::SERVER_ERROR, str_tools::portal},
+    utils::{
+        api_response::{AppError, SERVER_ERROR},
+        str_tools::portal,
+    },
 };
 pub fn copy_data(
     cx: Scope,
@@ -20,29 +23,17 @@ pub fn copy_data(
     cx.spawn(async move {
         let data = data::get_query(request()).await;
         match data {
-            Err(_) => {
-                alert(SERVER_ERROR); // unexpect error
+            Ok(data) => {
+                portal(data.clone());
+                copied_data.set(data);
             }
-
-            Ok(data) => match data.data {
-                Some(e) => {
-                    portal(e.clone());
-                    copied_data.set(e);
-                }
-                None => match data.err {
-                    Some(e) => match e.code {
-                        Some(inner) => match inner.as_str() {
-                            "INVALID_TOKEN" | "EXPIRED_TOKEN" => {
-                                router.push_route("/login", None, None)
-                            }
-                            _ => alert(&e.message),
-                        },
-                        None => alert(&e.message),
-                    },
-                    None => {
-                        alert(SERVER_ERROR);
-                    }
+            Err(e) => match e {
+                AppError::NetworkError(_) => alert(SERVER_ERROR),
+                AppError::SpecError(e) => match e.as_str() {
+                    "EXPIRED_TOKEN" | "INVALID_TOKEN" => router.push_route("/login", None, None),
+                    _ => alert(&e),
                 },
+                AppError::AnyError(e) => alert(&e),
             },
         }
     });
@@ -55,25 +46,21 @@ pub fn submit_data(
     cx.spawn(async move {
         let res = data::set_mutation(request(), data).await;
         match res {
-            Ok(res) => match res {
-                None => state.set("在任意终端按 C 复制".into()),
-                Some(e) => {
-                    if let Some(code) = e.code {
-                        match code.as_str() {
-                            "INVALID_TOKEN" | "EXPIRED_TOKEN" => {
-                                alert(&e.message);
-                                router.push_route("/login", None, None)
-                            }
-                            _ => alert(&e.message),
-                        }
-                    } else {
-                        alert(&e.message)
-                    }
+            Ok(r) => {
+                if r {
+                    state.set("在任意终端按 C 复制".into())
+                } else {
+                    state.set("返回数据异常".into())
                 }
-            },
-            Err(_) => {
-                alert(SERVER_ERROR); // unexpect error
             }
+            Err(e) => match e {
+                AppError::NetworkError(_) => alert(SERVER_ERROR),
+                AppError::SpecError(e) => match e.as_str() {
+                    "EXPIRED_TOKEN" | "INVALID_TOKEN" => router.push_route("/login", None, None),
+                    _ => alert(&e),
+                },
+                AppError::AnyError(e) => alert(&e),
+            },
         }
     });
 }
@@ -81,24 +68,15 @@ pub async fn first_cache(init_data: UseState<String>, router: Rc<RouterService>)
     let data = data::get_query(request()).await;
     match data {
         Ok(data) => {
-            if let Some(err) = data.err {
-                match err.code {
-                    Some(code) => {
-                        alert(&err.message);
-                        if (code.as_str() == "INVALID_TOKEN") || (code.as_str() == "EXPIRED_TOKEN")
-                        {
-                            router.push_route("/login", None, None)
-                        }
-                    }
-                    None => alert(&err.message),
-                }
-            } else if let Some(data) = data.data {
-                init_data.set(data);
-            }
+            init_data.set(data);
         }
-        Err(_) => {
-            alert(SERVER_ERROR);
-            //router.push_route("/login", None, None);
-        }
+        Err(err) => match err {
+            AppError::NetworkError(_) => alert(SERVER_ERROR),
+            AppError::SpecError(e) => match e.as_str() {
+                "EXPIRED_TOKEN" | "INVALID_TOKEN" => router.push_route("/login", None, None),
+                _ => alert(&e),
+            },
+            AppError::AnyError(e) => alert(&e),
+        },
     }
 }

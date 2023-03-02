@@ -1,8 +1,7 @@
 use graphql_client::{GraphQLQuery, Response};
 use reqwest::RequestBuilder;
-use std::error::Error;
 
-use crate::utils::api_response::{get_err, ErrData, ResData, SERVER_ERROR};
+use crate::utils::api_response::{get_err, AppError, PARSER_ERROR, SERVER_ERROR};
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -13,27 +12,27 @@ use crate::utils::api_response::{get_err, ErrData, ResData, SERVER_ERROR};
 )]
 pub struct Set;
 
-pub async fn set_mutation(
-    request: RequestBuilder,
-    data: String,
-) -> Result<Option<ErrData>, Box<dyn Error>> {
+pub async fn set_mutation(request: RequestBuilder, data: String) -> Result<bool, AppError> {
     let request_body = Set::build_query(set::Variables { data });
-    let response_body: Response<set::ResponseData> =
-        request.json(&request_body).send().await?.json().await?;
-    if response_body.errors.is_some() {
-        let data = get_err(response_body);
-        return Ok(Some(ErrData {
-            message: data.0,
-            code: data.1,
-        }));
+    let response_body: Response<set::ResponseData> = request
+        .json(&request_body)
+        .send()
+        .await
+        .map_err(|_| AppError::AnyError(SERVER_ERROR.into()))?
+        .json()
+        .await
+        .map_err(|_| AppError::AnyError(PARSER_ERROR.into()))?;
+
+    let v = response_body.errors.map(|e| e);
+    if let Some(v) = v {
+        get_err(&v)?;
     }
-    if response_body.data.map(|r| r.set) == Some(true) {
-        Ok(None)
+
+    let t = response_body.data.map(|r| r.set);
+    if let Some(t) = t {
+        Ok(t)
     } else {
-        Ok(Some(ErrData {
-            message: SERVER_ERROR.into(),
-            code: None,
-        }))
+        Ok(false)
     }
 }
 
@@ -46,32 +45,22 @@ pub async fn set_mutation(
 )]
 pub struct Get;
 
-pub async fn get_query(request: RequestBuilder) -> Result<ResData<String>, Box<dyn Error>> {
+pub async fn get_query(request: RequestBuilder) -> Result<String, AppError> {
     let request_body = Get::build_query(get::Variables);
-    let response_body: Response<get::ResponseData> =
-        request.json(&request_body).send().await?.json().await?;
-    if response_body.errors.is_some() {
-        let data = get_err(response_body);
-        return Ok(ResData {
-            data: None,
-            err: Some(ErrData {
-                message: data.0,
-                code: data.1,
-            }),
-        });
+    let response_body: Response<get::ResponseData> = request
+        .json(&request_body)
+        .send()
+        .await
+        .map_err(|_| AppError::AnyError(SERVER_ERROR.into()))?
+        .json()
+        .await
+        .map_err(|_| AppError::AnyError(PARSER_ERROR.into()))?;
+    let v = response_body.errors.map(|e| e);
+    if let Some(v) = v {
+        get_err(&v)?;
     }
-    // Ok(response_body.data.expect_throw("response data err").get)
     match response_body.data {
-        Some(e) => Ok(ResData {
-            data: Some(e.get),
-            err: None,
-        }),
-        None => Ok(ResData {
-            err: Some(ErrData {
-                message: SERVER_ERROR.into(),
-                code: None,
-            }),
-            data: None,
-        }),
+        Some(e) => Ok(e.get),
+        None => Err(AppError::AnyError(SERVER_ERROR.into())),
     }
 }
