@@ -22,10 +22,8 @@ pub async fn set_mutation(request: RequestBuilder, data: String) -> Result<bool,
         .json()
         .await
         .map_err(|_| AppError::AnyError(PARSER_ERROR.into()))?;
-
-    let v = response_body.errors.map(|e| e);
-    if let Some(v) = v {
-        get_err(&v)?;
+    if let Some(v) = response_body.errors {
+        get_err(v)?;
     }
 
     let t = response_body.data.map(|r| r.set);
@@ -55,9 +53,8 @@ pub async fn get_query(request: RequestBuilder) -> Result<String, AppError> {
         .json()
         .await
         .map_err(|_| AppError::AnyError(PARSER_ERROR.into()))?;
-    let v = response_body.errors.map(|e| e);
-    if let Some(v) = v {
-        get_err(&v)?;
+    if let Some(v) = response_body.errors {
+        get_err(v)?;
     }
     match response_body.data {
         Some(e) => Ok(e.get),
