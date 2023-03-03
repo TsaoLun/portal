@@ -57,6 +57,7 @@ pub fn submit_data(
                 AppError::NetworkError(_) => alert(SERVER_ERROR),
                 AppError::SpecError(e) => match e.as_str() {
                     "EXPIRED_TOKEN" | "INVALID_TOKEN" => router.push_route("/login", None, None),
+                    "INVALID_INPUT" => alert("请输入有效内容"),
                     _ => alert(&e),
                 },
                 AppError::AnyError(e) => alert(&e),
