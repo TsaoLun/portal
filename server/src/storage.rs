@@ -85,7 +85,7 @@ pub struct Mutation;
 impl Mutation {
     async fn set(&self, ctx: &Context<'_>, data: String) -> FieldResult<bool> {
         validate(ctx)?;
-        if data == "" {
+        if data.is_empty() {
             return Err(FieldError::from("请输入有效内容!"))
                 .map_err(|err| err.extend_with(|_, e| e.set("code", "INVALID_INPUT")));
         }

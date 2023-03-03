@@ -47,8 +47,8 @@ async fn index_graphiql() -> Result<HttpResponse> {
         .content_type("text/html; charset=utf-8")
         .body(
             http::GraphiQLSource::build()
-                .endpoint(&format!("http://{}", SERVER_URL.to_string()))
-                .subscription_endpoint(&format!("ws://{}", SERVER_URL.to_string()))
+                .endpoint(&format!("http://{}", *SERVER_URL))
+                .subscription_endpoint(&format!("ws://{}", *SERVER_URL))
                 .finish(),
         ))
 }
@@ -59,7 +59,7 @@ async fn main() -> std::io::Result<()> {
     let schema = Schema::build(Query, Mutation, EmptySubscription)
         .data(Storage::default())
         .finish();
-    println!("\n> server run at http://{}.", SERVER_URL.to_string());
+    println!("\n> server run at http://{}.", *SERVER_URL);
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(schema.clone()))
@@ -67,7 +67,7 @@ async fn main() -> std::io::Result<()> {
                 Cors::default()
                     .allow_any_header()
                     .allowed_methods(vec!["POST"])
-                    .allowed_origin(&format!("http://{}", SERVER_URL.to_string()))
+                    .allowed_origin(&format!("http://{}", *SERVER_URL))
                     .allowed_origin(
                         &env::var("PORTAL_URL").unwrap_or("http://127.0.0.1:8080".to_string()),
                     ),
