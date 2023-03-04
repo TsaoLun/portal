@@ -2,7 +2,7 @@
 
 **Docker 快速搭建方式**
 
-1. 设置 JWT_KEY 和用户密码：创建 .env 文件，内容为： `PORTAL_JWT_KEY={任意JWT_KEY} PORTAL_USERNAME={你的用户名} PORTAL_PASSWORD={你的密码}`。
+1. 设置 JWT_KEY 和用户密码：创建 .env 文件，内容为： `SERVER_URL={服务端URL(0.0.0.0:8008)} PORTAL_JWT_KEY={任意JWT_KEY} PORTAL_USERNAME={你的用户名} PORTAL_PASSWORD={你的密码}`。
 
 2. 项目目录下执行 `docker build -t portal .`。
 
