@@ -18,7 +18,7 @@ lazy_static! {
 }
 fn init_url() -> String {
     env::var("SERVER_URL")
-        .unwrap_or("127.0.0.1:8008".to_string())
+        .unwrap_or("0.0.0.0:8008".to_string())
         .replace("http://", "")
 }
 async fn index(
