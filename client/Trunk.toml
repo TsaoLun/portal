@@ -18,3 +18,7 @@ no_autoreload = false
 stage = "pre_build"
 command = "tailwindcss"
 command_arguments = ["-c", "./tailwind.config.js", "-o", "./.tailwind.css"]
+
+[[proxy]]
+rewrite = "/graphql"
+backend = "http://127.0.0.1:8008"

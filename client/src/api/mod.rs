@@ -8,8 +8,6 @@ use reqwest::{Client, RequestBuilder};
 pub mod data;
 pub mod login;
 
-const PORT: &str = ":8008";
-
 lazy_static! {
     pub static ref REQ: Client = init_request();
     static ref URL: String = init_url();
@@ -21,13 +19,12 @@ pub fn init_request() -> Client {
 
 pub fn init_url() -> String {
     format!(
-        "http://{}",
+        "http://{}/graphql",
         window()
             .location()
-            .hostname()
+            .origin()
             .unwrap()
             .replace("http://", "")
-            + PORT
     )
 }
 
