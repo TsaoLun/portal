@@ -63,7 +63,8 @@ pub fn Data(cx: Scope) -> Element {
                 "{state}" 
             }
 
-            LabelInput { name: "", id: "data" }
+            LabelInput { name: "", id: "data" 
+            }
             button {
                 onclick: onclick,
                 ontouchstart: ontouchstart,

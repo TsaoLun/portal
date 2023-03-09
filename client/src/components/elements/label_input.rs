@@ -13,29 +13,15 @@ pub fn LabelInput<'a>(cx: Scope<'a, SelfProps<'a>>) -> Element {
     } else {
         "text"
     };
-    let style = r#"
-    label {
-        width: 60px;
-        line-height: 3rem;
-        align-self: flex-start;
-        display: inline-block;
-    }
-    input {
-        width: 300px;
-        height: 30px;
-        font-size: medium;
-        padding-inline: 10px;
-        border-radius: 0px;
-        outline-color: orange;
-        border: 2px solid black;
-    }
-    "#;
     cx.render(rsx! {
-    style { "{style}" }
-    label { "{cx.props.name}" }
-    input {
-        r#type: format_args! { "{}", input_type },
-        id: format_args! { "{}", cx.props.id },
-        name: format_args! { "{}", cx.props.id } }
+        label {
+            class: "w-10 leading-3 self-start inline-block",
+            "{cx.props.name}"
+        }
+        input {
+            class:"w-15 mt-3 ml-3 h-10 border-2 p-3 border-solid border-black",
+            r#type: format_args! { "{}", input_type },
+            id: format_args! { "{}", cx.props.id },
+            name: format_args! { "{}", cx.props.id } }
     })
 }
