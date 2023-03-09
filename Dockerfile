@@ -20,6 +20,8 @@ COPY . .
 #     && echo '[net]' >> $CARGO_CONF \
 #     && echo 'git-fetch-with-cli = true' >> $CARGO_CONF
 
+RUN apt-get update && apt-get install -y nodejs npm && npm i tailwindcss -g
+
 RUN cd /usr/src/portal/server && cargo install --path .
 
 RUN cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo install trunk  && trunk build --release
