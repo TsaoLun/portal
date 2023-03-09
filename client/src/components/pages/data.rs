@@ -56,8 +56,12 @@ pub fn Data(cx: Scope) -> Element {
             onchange: |_| state.set("请记得提交~".into()),
             onsubmit: onsubmit,
             prevent_default: "onsubmit",
+            class: "text-center ml-4",
             style { include_str!("../../assets/data.css") }
-            h1 { "{state}" }
+            h1 {
+                class: "text-2xl mb-6 mr-3", 
+                "{state}" 
+            }
 
             LabelInput { name: "", id: "data" }
             button {
@@ -65,12 +69,15 @@ pub fn Data(cx: Scope) -> Element {
                 ontouchstart: ontouchstart,
                 ontouchend: ontouchend,
                 prevent_default: "onclick",
-                class: "copy",
+                class: "border-2 border-black w-10 h-10 ml-6",
                 "C"
             }
 
             br {}
-            button { class: "submit", "提交" }
+            button { 
+                class: "border-2 border-black w-20 h-10 text-xl mt-5 mr-3", 
+                "提交" 
+            }
         }
     })
 }

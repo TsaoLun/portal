@@ -7,7 +7,7 @@ div form input {
     div {
         width: 95vmax;
         height: 60vmin;
-        padding-top: max(7%, 180px);
+        padding-top: max(7%, 160px);
     }
 }
 
@@ -15,6 +15,6 @@ div form input {
     div {
         width: 95vmin;
         height: 60vmax;
-        padding-top: min(35%, 180px);
+        padding-top: min(35%, 160px);
     }
 }
