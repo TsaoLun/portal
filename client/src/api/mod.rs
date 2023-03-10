@@ -19,12 +19,11 @@ pub fn init_request() -> Client {
 
 pub fn init_url() -> String {
     format!(
-        "http://{}/graphql",
+        "{}/graphql",
         window()
             .location()
             .origin()
             .unwrap()
-            .replace("http://", "")
     )
 }
 
