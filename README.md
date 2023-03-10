@@ -16,6 +16,8 @@
 
 2. 安装 Cargo 环境和 WASM 工具 Trunk (`cargo install trunk`)，执行 `rustup target add wasm32-unknown-unknown`。
 
-3. 在 client 目录下执行 `trunk serve` 运行前端部分。
+3. 安装 npm 环境，执行 `npm i tailwindcss -g`。
 
 4. 在 server 目录下执行 `cargo run .` 运行后端服务。
+
+5. 在 client 目录下执行 `trunk serve` 运行前端部分。
