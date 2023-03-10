@@ -20,7 +20,7 @@ pub fn Login(cx: Scope) -> Element {
         div {
             class: "text-center",
             h1 {
-                class: "text-2xl ml-6", 
+                class: "text-2xl ml-5", 
                 "Login" 
             }
             form { onsubmit: onsubmit, prevent_default: "onsubmit",
@@ -29,7 +29,7 @@ pub fn Login(cx: Scope) -> Element {
                 LabelInput { self_type: "password", name: "密码", id: "password" }
                 br {}
                 button {
-                    class:"border-2 border-black hover:border-orange-500 text-center w-20 h-10 text-xl ml-6 mt-2",
+                    class:"border-2 border-black hover:border-orange-500 text-center w-20 h-10 text-xl ml-5 mt-5",
                     "登陆" 
                 }
             }
