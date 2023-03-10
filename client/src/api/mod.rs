@@ -18,13 +18,7 @@ pub fn init_request() -> Client {
 }
 
 pub fn init_url() -> String {
-    format!(
-        "{}/graphql",
-        window()
-            .location()
-            .origin()
-            .unwrap()
-    )
+    format!("{}/graphql", window().location().origin().unwrap())
 }
 
 pub fn request() -> RequestBuilder {

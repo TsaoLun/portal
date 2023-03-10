@@ -6,7 +6,7 @@
 
 2. 项目目录下执行 `docker build -t portal .`。
 
-3. .env 目录执行 `docker run -d --rm --env-file .env -p 8008:8008 -p 8080:8080 --name portal portal`
+3. .env 目录执行 `docker run -d --rm --env-file .env -p 8080:8080 --name portal portal`
 
 4. 多设备访问服务器 8080 端口，进行数据快速复制。
 

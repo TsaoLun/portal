@@ -47,8 +47,8 @@ async fn index_graphiql() -> Result<HttpResponse> {
         .content_type("text/html; charset=utf-8")
         .body(
             http::GraphiQLSource::build()
-                .endpoint(&format!("http://{}", *SERVER_URL))
-                .subscription_endpoint(&format!("ws://{}", *SERVER_URL))
+                .endpoint(&format!("http://{}/graphql/", *SERVER_URL))
+                .subscription_endpoint(&format!("ws://{}/graphql/", *SERVER_URL))
                 .finish(),
         ))
 }
@@ -68,12 +68,11 @@ async fn main() -> std::io::Result<()> {
                     .allow_any_header()
                     .allowed_methods(vec!["POST"])
                     .allowed_origin(&format!("http://{}", *SERVER_URL))
-                    .allowed_origin(
-                        &env::var("PORTAL_URL").unwrap_or("http://127.0.0.1:8080".to_string()),
-                    ),
-            ) //  生产环境请注释 Not recommended for production use.
-            //.wrap(actix_web::middleware::Logger::default())
-            .service(web::resource("/").guard(guard::Post()).to(index))
+                    .allowed_origin("http://127.0.0.1:8008")
+                    .allowed_origin("http://127.0.0.1:8080")
+                    .allowed_origin("http://0.0.0.0:8080"),
+            )
+            .service(web::resource("/graphql/").guard(guard::Post()).to(index))
             .service(
                 web::resource("/")
                     .guard(guard::Get())

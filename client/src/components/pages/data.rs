@@ -59,11 +59,11 @@ pub fn Data(cx: Scope) -> Element {
             class: "text-center ml-4",
             style { include_str!("../../assets/data.css") }
             h1 {
-                class: "text-2xl mb-6 mr-3", 
-                "{state}" 
+                class: "text-2xl mb-6 mr-3",
+                "{state}"
             }
 
-            LabelInput { name: "", id: "data" 
+            LabelInput { name: "", id: "data"
             }
             button {
                 onclick: onclick,
@@ -75,9 +75,9 @@ pub fn Data(cx: Scope) -> Element {
             }
 
             br {}
-            button { 
-                class: "border-2 border-black w-20 h-10 text-xl mt-5 mr-3", 
-                "提交" 
+            button {
+                class: "border-2 border-black w-20 h-10 text-xl mt-5 mr-3",
+                "提交"
             }
         }
     })

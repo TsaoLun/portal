@@ -21,4 +21,4 @@ command_arguments = ["-c", "./tailwind.config.js", "-o", "./.tailwind.css"]
 
 [[proxy]]
 rewrite = "/graphql"
-backend = "http://127.0.0.1:8008"
+backend = "http://127.0.0.1:8008/graphql"

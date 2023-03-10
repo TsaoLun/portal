@@ -42,8 +42,6 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 COPY client/nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 8008/tcp
-
 EXPOSE 8080/tcp
 
 ENTRYPOINT sh -c "service nginx start && portal-server"
