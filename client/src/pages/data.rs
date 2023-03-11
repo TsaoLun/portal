@@ -1,6 +1,6 @@
 use crate::{
-    components::elements::label_input::LabelInput,
-    handlers::data_updater::{copy_data, first_cache, submit_data},
+    components::label_input::LabelInput,
+    models::data_updater::{copy_data, first_cache, submit_data},
     utils::str_tools::{cut_to_show, portal},
 };
 use dioxus::{
@@ -57,7 +57,7 @@ pub fn Data(cx: Scope) -> Element {
             onsubmit: onsubmit,
             prevent_default: "onsubmit",
             class: "text-center",
-            style { include_str!("../../assets/data.css") }
+            style { include_str!("./data.css") }
             h1 {
                 class: "text-2xl mb-6 ml-5",
                 "{state}"

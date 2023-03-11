@@ -1,4 +1,4 @@
-use crate::components::pages::{data::*, login::*};
+use crate::pages::{data::*, login::*};
 use dioxus::prelude::*;
 use dioxus_router::{Route, Router};
 

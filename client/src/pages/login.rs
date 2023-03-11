@@ -1,4 +1,4 @@
-use crate::{components::elements::label_input::LabelInput, handlers::data_auth::submit_login};
+use crate::{components::label_input::LabelInput, models::data_auth::submit_login};
 use dioxus::{events::FormEvent, prelude::*};
 use dioxus_router::use_router;
 
@@ -16,7 +16,7 @@ pub fn Login(cx: Scope) -> Element {
         );
     };
     cx.render(rsx! {
-        style { include_str!("../../assets/login.css") }
+        style { include_str!("./login.css") }
         div {
             class: "text-center",
             h1 {

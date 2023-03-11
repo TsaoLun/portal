@@ -1,2 +1,1 @@
-pub mod elements;
-pub mod pages;
+pub mod label_input;
