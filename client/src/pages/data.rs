@@ -37,6 +37,10 @@ pub fn Data(cx: Scope) -> Element {
         e.stop_propagation();
         copy_data(cx, (copied_data.clone(), init_data.clone()), router.clone());
     };
+    let upload_click = move |e: MouseEvent| {
+        e.stop_propagation();
+        
+    };
     let onsubmit = move |e: FormEvent| {
         submit_data(
             cx,
@@ -62,17 +66,24 @@ pub fn Data(cx: Scope) -> Element {
                 class: "text-2xl mb-6 ml-5",
                 "{state}"
             }
-
-            LabelInput { name: "", id: "data" }
-            button {
-                onclick: onclick,
-                ontouchstart: ontouchstart,
-                ontouchend: ontouchend,
-                prevent_default: "onclick",
-                class: "border-2 border-black w-10 h-10 ml-3",
-                "C"
+            div {
+                class: "relative",
+                LabelInput { name: "", id: "data" }
+                button {
+                    class: "relative border-2 border-gray-400 text-gray-400 w-6 h-6 top-0.5 right-8",
+                    onclick: upload_click,
+                    prevent_default: "onclick",
+                    "p"
+                }
+                button {
+                    onclick: onclick,
+                    ontouchstart: ontouchstart,
+                    ontouchend: ontouchend,
+                    prevent_default: "onclick",
+                    class: "border-2 border-black w-10 h-10",
+                    "C"
+                }
             }
-
             br {}
             button {
                 class: "border-2 border-black w-20 h-10 text-xl mt-5 ml-5",
