@@ -8,6 +8,9 @@ use dioxus::{
     prelude::*,
 };
 use dioxus_router::use_router;
+use gloo::console::log;
+use web_sys::HtmlInputElement;
+use wasm_bindgen::JsCast;
 
 #[allow(non_snake_case)]
 pub fn Data(cx: Scope) -> Element {
@@ -88,6 +91,31 @@ pub fn Data(cx: Scope) -> Element {
             button {
                 class: "border-2 border-black w-20 h-10 text-xl mt-5 ml-5",
                 "提交"
+            }
+        }
+        form {
+            class: "text-center",
+            input {
+                r#type:"file",
+                id:"upload",
+                onchange: move|_|{
+                    cx.spawn(async move{
+                        let window = web_sys::window()
+                        .expect("should have window")
+                        .document()
+                        .expect("should have a document.");
+                        let element = window.get_element_by_id("upload").unwrap().dyn_into::<HtmlInputElement>().unwrap();
+                        let files = element.files().expect("element should have files");
+                        if let Some(file) = files.get(0){
+                            log!(file.array_buffer());
+                            // let buffer = wasm_bindgen_futures::JsFuture::from(file.array_buffer())
+                            //     .await
+                            //     .expect("file should be loadable");
+                            // let array = Uint8Array::new(&buffer).to_vec();
+                            
+                        }
+                    })
+                }
             }
         }
     })
