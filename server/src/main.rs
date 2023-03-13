@@ -7,7 +7,7 @@ use actix_web::{
     guard, http::header::HeaderMap, web, web::Data, App, HttpRequest, HttpResponse, HttpServer,
     Result,
 };
-use async_graphql::*;
+use async_graphql::{http::MultipartOptions, *};
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
 use dotenv::dotenv;
 use lazy_static::lazy_static;
@@ -47,8 +47,8 @@ async fn index_graphiql() -> Result<HttpResponse> {
         .content_type("text/html; charset=utf-8")
         .body(
             http::GraphiQLSource::build()
-                .endpoint(&format!("http://{}/graphql/", *SERVER_URL))
-                .subscription_endpoint(&format!("ws://{}/graphql/", *SERVER_URL))
+                .endpoint("http://127.0.0.1:8008/graphql/")
+                .subscription_endpoint("ws://127.0.0.1:8008/graphql/")
                 .finish(),
         ))
 }
@@ -59,7 +59,7 @@ async fn main() -> std::io::Result<()> {
     let schema = Schema::build(Query, Mutation, EmptySubscription)
         .data(Storage::default())
         .finish();
-    println!("\n> server run at http://{}.", *SERVER_URL);
+    println!("\n> server run at http://127.0.0.1:8008");
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(schema.clone()))
@@ -72,7 +72,12 @@ async fn main() -> std::io::Result<()> {
                     .allowed_origin("http://127.0.0.1:8080")
                     .allowed_origin("http://0.0.0.0:8080"),
             )
-            .service(web::resource("/graphql/").guard(guard::Post()).to(index))
+            .service(
+                web::resource("/graphql/")
+                    .guard(guard::Post())
+                    .to(index)
+                    .app_data(MultipartOptions::default().max_num_files(3)),
+            )
             .service(
                 web::resource("/")
                     .guard(guard::Get())

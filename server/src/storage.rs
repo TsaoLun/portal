@@ -1,5 +1,6 @@
 use async_graphql::{
     Context, EmptySubscription, ErrorExtensions, FieldError, FieldResult, Object, Schema,
+    SimpleObject, Upload, ID,
 };
 use chrono::Utc;
 use futures_util::lock::Mutex;
@@ -13,6 +14,8 @@ pub struct Query;
 
 pub type Storage = Arc<Mutex<Slab<String>>>;
 
+pub type FileStorage = Mutex<Slab<FileInfo>>;
+
 const EXP: i64 = 7 * 24 * 60 * 60;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -25,6 +28,13 @@ struct Claims {
     user: String,
     exp: i64,
     iat: i64,
+}
+
+#[derive(Clone, SimpleObject)]
+pub struct FileInfo {
+    id: ID,
+    filename: String,
+    mimetype: Option<String>,
 }
 
 #[Object]
@@ -77,6 +87,10 @@ impl Query {
             })
         }
     }
+    async fn uploads(&self, ctx: &Context<'_>) -> Vec<FileInfo> {
+        let storage = ctx.data_unchecked::<FileStorage>().lock().await;
+        storage.iter().map(|(_, file)| file).cloned().collect()
+    }
 }
 
 pub struct Mutation;
@@ -93,6 +107,19 @@ impl Mutation {
         storage.clear();
         storage.insert(data);
         Ok(true)
+    }
+    async fn upload(&self, ctx: &Context<'_>, file: Upload) -> FileInfo {
+        let mut storage = ctx.data_unchecked::<FileStorage>().lock().await;
+        println!("files count: {}", storage.len());
+        let entry = storage.vacant_entry();
+        let upload = file.value(ctx).unwrap();
+        let info = FileInfo {
+            id: entry.key().into(),
+            filename: upload.filename.clone(),
+            mimetype: upload.content_type,
+        };
+        entry.insert(info.clone());
+        info
     }
 }
 

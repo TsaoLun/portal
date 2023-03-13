@@ -40,9 +40,6 @@ pub fn Data(cx: Scope) -> Element {
         e.stop_propagation();
         copy_data(cx, (copied_data.clone(), init_data.clone()), router.clone());
     };
-    let upload_click = move |e: MouseEvent| {
-        e.stop_propagation();
-    };
     let onsubmit = move |e: FormEvent| {
         submit_data(
             cx,
