@@ -9,8 +9,8 @@ use dioxus::{
 };
 use dioxus_router::use_router;
 use gloo::console::log;
-use web_sys::HtmlInputElement;
 use wasm_bindgen::JsCast;
+use web_sys::HtmlInputElement;
 
 #[allow(non_snake_case)]
 pub fn Data(cx: Scope) -> Element {
@@ -42,7 +42,6 @@ pub fn Data(cx: Scope) -> Element {
     };
     let upload_click = move |e: MouseEvent| {
         e.stop_propagation();
-        
     };
     let onsubmit = move |e: FormEvent| {
         submit_data(
@@ -56,6 +55,23 @@ pub fn Data(cx: Scope) -> Element {
     };
     let ontouchend = move |_| {
         portal(copied_data.clone().to_string());
+    };
+    let onupload = move |_| {
+        cx.spawn(async move {
+            let window = web_sys::window()
+                .expect("should have window")
+                .document()
+                .expect("should have a document.");
+            let element = window
+                .get_element_by_id("upload")
+                .unwrap()
+                .dyn_into::<HtmlInputElement>()
+                .unwrap();
+            let files = element.files().expect("element should have files");
+            if let Some(file) = files.get(0) {
+                log!(file.array_buffer());
+            }
+        })
     };
     cx.render(rsx! {
         form {
@@ -72,11 +88,16 @@ pub fn Data(cx: Scope) -> Element {
             div {
                 class: "relative",
                 LabelInput { name: "", id: "data" }
-                button {
-                    class: "relative border-2 border-gray-400 text-gray-400 w-6 h-6 top-0.5 right-8",
-                    onclick: upload_click,
-                    prevent_default: "onclick",
-                    "p"
+                label {
+                    class:"relative w-8 h-8 right-8",
+                    r#for:"upload",
+                    "UP"
+                    input {
+                        class:"hidden",
+                        r#type:"file",
+                        id:"upload",
+                        onchange: onupload
+                    }
                 }
                 button {
                     onclick: onclick,
@@ -91,31 +112,6 @@ pub fn Data(cx: Scope) -> Element {
             button {
                 class: "border-2 border-black w-20 h-10 text-xl mt-5 ml-5",
                 "提交"
-            }
-        }
-        form {
-            class: "text-center",
-            input {
-                r#type:"file",
-                id:"upload",
-                onchange: move|_|{
-                    cx.spawn(async move{
-                        let window = web_sys::window()
-                        .expect("should have window")
-                        .document()
-                        .expect("should have a document.");
-                        let element = window.get_element_by_id("upload").unwrap().dyn_into::<HtmlInputElement>().unwrap();
-                        let files = element.files().expect("element should have files");
-                        if let Some(file) = files.get(0){
-                            log!(file.array_buffer());
-                            // let buffer = wasm_bindgen_futures::JsFuture::from(file.array_buffer())
-                            //     .await
-                            //     .expect("file should be loadable");
-                            // let array = Uint8Array::new(&buffer).to_vec();
-                            
-                        }
-                    })
-                }
             }
         }
     })
