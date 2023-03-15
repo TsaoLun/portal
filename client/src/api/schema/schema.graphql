@@ -1,3 +1,5 @@
+scalar Upload
+
 schema {
   query: Query
   mutation: Mutation
@@ -6,6 +8,7 @@ schema {
 
 type Mutation {
     set(data: String!): Boolean!
+    upload(file: Upload!): FileInfo!
 }
 
 type Query {
@@ -25,4 +28,10 @@ type TokenResponse {
 
 type SetResponse {
     ok: Boolean
+}
+
+type FileInfo {
+    id: ID!
+    filename: String!
+    mimetype: String
 }

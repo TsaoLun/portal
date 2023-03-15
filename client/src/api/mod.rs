@@ -7,6 +7,7 @@ use reqwest::{Client, RequestBuilder};
 
 pub mod data;
 pub mod login;
+pub mod upload;
 
 lazy_static! {
     pub static ref REQ: Client = init_request();

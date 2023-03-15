@@ -58,6 +58,7 @@ async fn main() -> std::io::Result<()> {
     dotenv().ok();
     let schema = Schema::build(Query, Mutation, EmptySubscription)
         .data(Storage::default())
+        .data(FileStorage::default())
         .finish();
     println!("\n> server run at http://127.0.0.1:8008");
     HttpServer::new(move || {
@@ -70,7 +71,8 @@ async fn main() -> std::io::Result<()> {
                     .allowed_origin(&format!("http://{}", *SERVER_URL))
                     .allowed_origin("http://127.0.0.1:8008")
                     .allowed_origin("http://127.0.0.1:8080")
-                    .allowed_origin("http://0.0.0.0:8080"),
+                    .allowed_origin("http://0.0.0.0:8080")
+                    .allow_any_origin(),
             )
             .service(
                 web::resource("/graphql/")

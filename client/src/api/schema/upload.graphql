@@ -1,0 +1,7 @@
+mutation Upload($file:Upload!){
+  upload(file:$file){
+    id
+    filename
+    mimetype
+  }
+}
