@@ -1,4 +1,5 @@
 mod storage;
+mod upload;
 use std::env;
 
 use crate::storage::*;
@@ -12,6 +13,8 @@ use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscripti
 use dotenv::dotenv;
 use lazy_static::lazy_static;
 use storage::Token;
+use log::{debug, error, info};
+use upload::*;
 
 lazy_static! {
     pub static ref SERVER_URL: String = init_url();
@@ -64,6 +67,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(schema.clone()))
+            .app_data(init_upload_folder())
             .wrap(
                 Cors::default()
                     .allow_any_header()
@@ -72,13 +76,12 @@ async fn main() -> std::io::Result<()> {
                     .allowed_origin("http://127.0.0.1:8008")
                     .allowed_origin("http://127.0.0.1:8080")
                     .allowed_origin("http://0.0.0.0:8080")
-                    .allow_any_origin(),
             )
             .service(
                 web::resource("/graphql/")
                     .guard(guard::Post())
                     .to(index)
-                    .app_data(MultipartOptions::default().max_num_files(3)),
+                   //.app_data(MultipartOptions::default().max_num_files(3)),
             )
             .service(
                 web::resource("/")
@@ -87,6 +90,9 @@ async fn main() -> std::io::Result<()> {
                     .to(index_ws),
             )
             .service(web::resource("/").guard(guard::Get()).to(index_graphiql))
+            .service(upload_handler)
+            .service(render_file_handler)
+            .service(get_files)
     })
     .bind(SERVER_URL.to_string())?
     .run()
@@ -102,4 +108,18 @@ fn get_token_from_headers(headers: &HeaderMap) -> Option<Token> {
             })
             .ok()
     })
+}
+
+fn init_upload_folder() ->  Data<std::sync::Mutex<KeyFileData>> {
+    let upload_folder =
+    std::path::PathBuf::from("./upload");
+
+    if !upload_folder.exists() {
+        debug!("Creating upload folder...");
+        std::fs::create_dir(&upload_folder).expect("Possibility to create upload folder");
+    }
+    actix_web::web::Data::new(std::sync::Mutex::new(KeyFileData {
+        data: std::collections::HashMap::new(),
+        upload_folder,
+    }))
 }
