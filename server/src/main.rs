@@ -59,6 +59,8 @@ async fn index_graphiql() -> Result<HttpResponse> {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
+    env::set_var("RUST_LOG", "debug");
+    env_logger::init();
     let schema = Schema::build(Query, Mutation, EmptySubscription)
         .data(Storage::default())
         .data(FileStorage::default())

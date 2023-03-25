@@ -2,3 +2,4 @@
 **/target
 **/.env
 **/.tailwind.css
+**/upload/
