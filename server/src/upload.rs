@@ -1,7 +1,10 @@
-use actix_web::{middleware, web, App, HttpResponse, HttpServer, http::header::ContentType, Responder, Result, error};
+use actix_web::{
+    error, http::header::ContentType, middleware, web, App, HttpResponse, HttpServer, Responder,
+    Result,
+};
+use futures_util::stream::StreamExt as _;
 use log::{debug, error, info};
 use std::{env, fs::File, io::Write};
-use futures_util::stream::StreamExt as _;
 
 pub struct KeyFileData {
     pub data: std::collections::HashMap<String, std::path::PathBuf>,
@@ -15,7 +18,6 @@ async fn upload_handler(
 ) -> HttpResponse {
     debug!("Reading file from request...");
     if let Some(Ok(mut file)) = file.next().await {
-        println!("{:?}", file.headers());
         debug!("Ok. File exists!");
         debug!("Locking data...");
 
@@ -25,9 +27,17 @@ async fn upload_handler(
             let new_key = uuid::Uuid::new_v4();
             info!("New key for file: {}", new_key.to_string());
 
-            let path = key_data_file
-                .upload_folder
-                .join(format!("{:?}", file.headers().keys()));
+            let path = key_data_file.upload_folder.join(format!(
+                "{}.{}",
+                new_key,
+                file.headers()
+                    .get("content-type")
+                    .unwrap()
+                    .to_str()
+                    .unwrap()
+                    .split('/')
+                    .collect::<Vec<&str>>()[1]
+            ));
 
             debug!("New file path: {}", path.to_str().unwrap_or(""));
             debug!("Saving file...");
@@ -52,12 +62,13 @@ async fn upload_handler(
     HttpResponse::BadRequest().body("File was not provided!")
 }
 
-#[actix_web::get("/get")]
+#[actix_web::get("/getFiles")]
 async fn get_files(
     data: actix_web::web::Data<std::sync::Mutex<KeyFileData>>,
 ) -> Result<impl Responder> {
     if let Ok(key_data_file) = data.lock() {
-        let data: Vec<String> = key_data_file.data.keys().map(|e|e.clone()).collect();
+        println!("{:?}", key_data_file.data);
+        let data: Vec<String> = key_data_file.data.keys().map(|e| e.clone()).collect();
         return Ok(web::Json(data));
     }
     return Err(error::ErrorExpectationFailed("Failed to lock data!"));
