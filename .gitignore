@@ -3,3 +3,4 @@
 **/.env
 **/.tailwind.css
 **/upload/
+**/.DS_Store
