@@ -65,11 +65,12 @@ async fn main() -> std::io::Result<()> {
         .data(Storage::default())
         .data(FileStorage::default())
         .finish();
+    let data = init_upload_folder();
     println!("\n> server run at http://127.0.0.1:8008");
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(schema.clone()))
-            .app_data(init_upload_folder())
+            .app_data(data.clone())
             .wrap(
                 Cors::default()
                     .allow_any_header()
@@ -121,7 +122,6 @@ fn init_upload_folder() ->  Data<std::sync::Mutex<KeyFileData>> {
         std::fs::create_dir(&upload_folder).expect("Possibility to create upload folder");
     }
     actix_web::web::Data::new(std::sync::Mutex::new(KeyFileData {
-        data: std::collections::HashMap::new(),
-        upload_folder,
+        data: std::path::PathBuf::from(""),
     }))
 }
