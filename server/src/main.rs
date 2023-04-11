@@ -12,8 +12,8 @@ use async_graphql::{http::MultipartOptions, *};
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
 use dotenv::dotenv;
 use lazy_static::lazy_static;
-use storage::Token;
 use log::{debug, error, info};
+use storage::Token;
 use upload::*;
 
 lazy_static! {
@@ -78,13 +78,10 @@ async fn main() -> std::io::Result<()> {
                     .allowed_origin(&format!("http://{}", *SERVER_URL))
                     .allowed_origin("http://127.0.0.1:8008")
                     .allowed_origin("http://127.0.0.1:8080")
-                    .allowed_origin("http://0.0.0.0:8080")
+                    .allowed_origin("http://0.0.0.0:8080"),
             )
             .service(
-                web::resource("/graphql/")
-                    .guard(guard::Post())
-                    .to(index)
-                   //.app_data(MultipartOptions::default().max_num_files(3)),
+                web::resource("/graphql/").guard(guard::Post()).to(index), //.app_data(MultipartOptions::default().max_num_files(3)),
             )
             .service(
                 web::resource("/")
@@ -96,6 +93,7 @@ async fn main() -> std::io::Result<()> {
             .service(upload_handler)
             .service(render_file_handler)
             .service(get_files)
+            .service(del_file_handler)
     })
     .bind(SERVER_URL.to_string())?
     .run()
@@ -113,9 +111,8 @@ fn get_token_from_headers(headers: &HeaderMap) -> Option<Token> {
     })
 }
 
-fn init_upload_folder() ->  Data<std::sync::Mutex<KeyFileData>> {
-    let upload_folder =
-    std::path::PathBuf::from("./upload");
+fn init_upload_folder() -> Data<std::sync::Mutex<KeyFileData>> {
+    let upload_folder = std::path::PathBuf::from("./upload");
 
     if !upload_folder.exists() {
         debug!("Creating upload folder...");

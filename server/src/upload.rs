@@ -4,7 +4,11 @@ use actix_web::{
 };
 use futures_util::stream::StreamExt as _;
 use log::{debug, error, info};
-use std::{env, fs::File, io::Write};
+use std::{
+    env,
+    fs::{self, metadata, remove_file, File},
+    io::Write,
+};
 
 pub struct KeyFileData {
     pub data: std::path::PathBuf,
@@ -67,7 +71,7 @@ async fn get_files(
 ) -> Result<impl Responder> {
     if let Ok(key_data_file) = data.lock() {
         println!("{:?}", key_data_file.data);
-        if let Some(f)  = key_data_file.data.clone().to_str() {
+        if let Some(f) = key_data_file.data.clone().to_str() {
             return Ok(web::Json(f.to_owned()));
         } else {
             return Ok(web::Json("".to_owned()));
@@ -78,9 +82,6 @@ async fn get_files(
 
 #[actix_web::get("/get/{key}")]
 async fn render_file_handler(key: web::Path<String>) -> HttpResponse {
-    debug!("Locking data...");
-
-    debug!("Ok. Data locked!");
     let key = key.into_inner().clone();
     debug!("{}", key);
     if let Ok(file) = std::fs::read(format!("upload/{}", key)) {
@@ -89,5 +90,19 @@ async fn render_file_handler(key: web::Path<String>) -> HttpResponse {
     } else {
         error!("Failed to open file reading...");
         return HttpResponse::InternalServerError().body("Faile to open file for reading!");
+    }
+}
+
+#[actix_web::get("/del/{key}")]
+async fn del_file_handler(key: web::Path<String>) -> HttpResponse {
+    let key = key.into_inner().clone();
+    if let Ok(_file) = metadata(format!("upload/{}", key)) {
+        if let Err(_e) = remove_file(format!("upload/{}", key)) {
+            return HttpResponse::InternalServerError().body("Failed to delete file!");
+        }
+        return HttpResponse::Ok().body("ok");
+    } else {
+        error!("Failed to find file...");
+        return HttpResponse::InternalServerError().body("Failed to find file!");
     }
 }

@@ -1,9 +1,9 @@
 mod api;
 mod components;
 mod models;
+mod pages;
 mod router;
 mod utils;
-mod pages;
 use dioxus::prelude::*;
 use router::router;
 
