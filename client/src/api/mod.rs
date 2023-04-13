@@ -4,13 +4,13 @@ use gloo::{
 };
 use lazy_static::lazy_static;
 use reqwest::{Client, RequestBuilder, StatusCode};
+use wasm_bindgen::JsCast;
 use web_sys::Blob;
 use js_sys::{
     ArrayBuffer,
     Uint8Array,
 };
 use wasm_bindgen_futures::*;
-use futures::StreamExt;
 
 pub mod data;
 pub mod login;
@@ -35,7 +35,6 @@ pub fn request() -> RequestBuilder {
 }
 
 pub async fn upload_to_server_inner_task(file: web_sys::File) -> Result<StatusCode, anyhow::Error> {
-    let fname = file.name();
     let blob: Blob = file.into();
     let blob =
         Uint8Array::new(
@@ -44,7 +43,7 @@ pub async fn upload_to_server_inner_task(file: web_sys::File) -> Result<StatusCo
     let client = Client::new();
     let req =
         client
-            .post(format!("{}/upload", window().location().origin().unwrap()))
+            .post(format!("{}/api/upload", window().location().origin().unwrap()))
             .header("Content-Length", &blob.len().to_string())
             .header("Content-Type", "application/octet-stream")
             .body(blob)

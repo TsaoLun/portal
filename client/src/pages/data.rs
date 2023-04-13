@@ -1,7 +1,7 @@
 use crate::{
     components::label_input::LabelInput,
     models::data_updater::{copy_data, first_cache, submit_data},
-    utils::str_tools::{cut_to_show, portal},
+    utils::str_tools::{cut_to_show, portal}, api::upload_to_server_inner_task,
 };
 use dioxus::{
     events::{FormEvent, MouseEvent},
@@ -66,7 +66,14 @@ pub fn Data(cx: Scope) -> Element {
                 .unwrap();
             let files = element.files().expect("element should have files");
             if let Some(file) = files.get(0) {
-                log!(file.array_buffer());
+                match upload_to_server_inner_task(file).await {
+                    Ok(_r) => {
+                        log!(_r.to_string());
+                    }
+                    Err(_e) => {
+                        log!(_e.to_string());
+                    }
+                }
             }
         })
     };
