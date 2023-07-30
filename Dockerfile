@@ -8,9 +8,7 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
 RUN sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
-RUN curl -sL https://mirrors.ustc.edu.cn/nodesource/deb/setup_18.x | bash
-
-RUN apt-get update && apt-get install -y nodejs && npm i tailwindcss -g
+RUN apt-get update && apt-get install -y nodejs npm && npm i -g n && n stable && npm i tailwindcss -g
 
 RUN echo '[source.crates-io]' > ~/.cargo/config \
  && echo 'registry = "https://github.com/rust-lang/crates.io-index"'  >> ~/.cargo/config \
