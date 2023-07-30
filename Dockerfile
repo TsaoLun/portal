@@ -8,18 +8,8 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
 RUN sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
-RUN curl -sL https://mirrors.ustc.edu.cn/nodesource/deb/setup_18.x | bash
+RUN apt-get update && rm -rf /var/lib/apt/lists/* && apt-get install -y nodejs && npm i tailwindcss -g
 
-RUN apt-get update && apt-get install -y nodejs && npm i tailwindcss -g
-
-RUN echo '[source.crates-io]' > $HOME/.cargo/config \
- && echo 'registry = "https://github.com/rust-lang/crates.io-index"'  >> $HOME/.cargo/config \
- && echo '# 替换成你偏好的镜像源'  >> $HOME/.cargo/config \
- && echo "replace-with = 'sjtu'"  >> $HOME/.cargo/config \
- && echo '# 上海交通大学'   >> $HOME/.cargo/config \
- && echo '[source.sjtu]'   >> $HOME/.cargo/config \
- && echo 'registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index"'  >> $HOME/.cargo/config \
- && echo '' >> $HOME/.cargo/config
 RUN cd /usr/src/portal/server && cargo install --path .
 
 RUN cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo install trunk  && trunk build --release
@@ -27,8 +17,6 @@ RUN cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && car
 FROM nginx
 
 WORKDIR /usr/src/client
-
-RUN apt-get update && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /usr/local/cargo/bin/portal-server /usr/local/bin/portal-server
 
