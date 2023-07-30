@@ -4,7 +4,7 @@ WORKDIR /usr/src/portal
 
 COPY . .
 
-RUN snap install node && npm i tailwindcss -g
+RUN apt-get update && apt-get install nodejs && npm i tailwindcss -g
 
 RUN cd /usr/src/portal/server && cargo install --path .
 
