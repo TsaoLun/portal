@@ -8,7 +8,7 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
 RUN sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
-RUN apt-get update && apt-get install -y nodejs && npm i tailwindcss -g
+RUN apt-get update && apt-get install -y nodejs npm && npm i tailwindcss -g
 
 RUN cd /usr/src/portal/server && cargo install --path .
 
