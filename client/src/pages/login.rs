@@ -16,21 +16,28 @@ pub fn Login(cx: Scope) -> Element {
         );
     };
     cx.render(rsx! {
-        style { include_str!("./login.css") }
         div {
-            class: "text-center",
-            h1 {
-                class: "text-2xl ml-5", 
-                "Login" 
-            }
-            form { onsubmit: onsubmit, prevent_default: "onsubmit",
-                LabelInput { name: "账号", id: "username" }
-                br {}
-                LabelInput { self_type: "password", name: "密码", id: "password" }
-                br {}
-                button {
-                    class:"border-2 border-black hover:border-orange-500 text-center w-20 h-10 text-xl ml-5 mt-5",
-                    "登陆" 
+            class: "flex h-screen",
+            div {
+                class: "text-center m-auto pb-20",
+                h1 {
+                    class: "text-2xl ml-10", 
+                    "Login" 
+                }
+                div {
+                    class: "mt-5",
+                    form { onsubmit: onsubmit, prevent_default: "onsubmit",
+                        LabelInput { name: "账号", id: "username" }
+                        br {}
+                        LabelInput { self_type: "password", name: "密码", id: "password" }
+                        div {
+                            class: "ml-10 mt-5",
+                            button {
+                                class:"border-2 border-black hover:border-orange-500 text-center w-20 h-10 text-xl",
+                                "登陆" 
+                            }
+                        }
+                    }
                 }
             }
         }

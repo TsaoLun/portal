@@ -22,6 +22,6 @@ pub fn LabelInput<'a>(cx: Scope<'a, SelfProps<'a>>) -> Element {
             class:"w-15 mt-3 ml-3 h-10 border-2 p-3 border-solid border-black",
             r#type: format_args! { "{}", input_type },
             id: format_args! { "{}", cx.props.id },
-            name: format_args! { "{}", cx.props.id } }
+            name: format_args! { "{}", cx.props.id } },
     })
 }

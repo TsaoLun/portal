@@ -44,39 +44,38 @@ pub fn Data(cx: Scope) -> Element {
             router.clone(),
         );
     };
-    let ontouchstart = move |_| {
-        copy_data(cx, (copied_data.clone(), init_data.clone()), router.clone());
-    };
     let ontouchend = move |_| {
         portal(copied_data.clone().to_string());
     };
     cx.render(rsx! {
-        form {
-            oninput: |_| state.set("输入中...".into()),
-            onchange: |_| state.set("请记得提交~".into()),
-            onsubmit: onsubmit,
-            prevent_default: "onsubmit",
-            class: "text-center",
-            style { include_str!("./data.css") }
-            h1 {
-                class: "text-2xl mb-6 ml-5",
-                "{state}"
-            }
+        div {
+            class: "flex h-screen",
+            form {
+                oninput: |_| state.set("输入中...".into()),
+                onchange: |_| state.set("请记得提交~".into()),
+                onsubmit: onsubmit,
+                onclick: |_|{},
+                prevent_default: "onsubmit",
+                class: "text-center m-auto pb-20",
+                h1 {
+                    class: "text-2xl mb-6 ml-10",
+                    "{state}"
+                }
 
-            LabelInput { name: "", id: "data" }
-            button {
-                onclick: onclick,
-                ontouchstart: ontouchstart,
-                ontouchend: ontouchend,
-                prevent_default: "onclick",
-                class: "border-2 border-black w-10 h-10 ml-3",
-                "C"
-            }
+                LabelInput { name: "", id: "data" }
+                button {
+                    onclick: onclick,
+                    ontouchend: ontouchend,
+                    prevent_default: "onclick",
+                    class: "border-2 border-black w-10 h-10 ml-3",
+                    "C"
+                }
 
-            br {}
-            button {
-                class: "border-2 border-black w-20 h-10 text-xl mt-5 ml-5",
-                "提交"
+                br {}
+                button {
+                    class: "border-2 border-black w-20 h-10 text-xl mt-5 ml-5",
+                    "提交"
+                }
             }
         }
     })
