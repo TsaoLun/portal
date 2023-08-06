@@ -19,6 +19,7 @@ RUN set -x && \
     npm i tailwindcss -g && \
     cd /usr/src/portal/client && \ 
     rustup target add wasm32-unknown-unknown && \
+    cargo --config ../cargo.config.toml install --path . && \
     cargo --config ../cargo.config.toml install trunk --version=0.16.0  && \
     trunk build --release
 
