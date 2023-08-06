@@ -4,6 +4,10 @@ WORKDIR /usr/src/portal
 
 COPY . .
 
+ENV RUSTUP_DIST_SERVER="https://rsproxy.cn"
+
+ENV RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
+
 RUN set -x && \
     NODEJS_VERSION=v16.17.0 && \
     curl -O -L https://registry.npmmirror.com/-/binary/node/latest-v16.x/node-$NODEJS_VERSION-linux-x64.tar.gz && \
@@ -13,15 +17,12 @@ RUN set -x && \
     PATH=$PATH:/nodejs/bin && \
     npm config set registry https://registry.npmmirror.com && \
     npm i tailwindcss -g && \
-    tailwindcss info
-
-ENV RUSTUP_DIST_SERVER="https://rsproxy.cn"
-
-ENV RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
+    cd /usr/src/portal/client && \ 
+    rustup target add wasm32-unknown-unknown && \
+    cargo --config ../cargo.config.toml install trunk --version=0.16.0  && \
+    trunk build --release
 
 RUN cd /usr/src/portal/server && cargo --config ../cargo.config.toml install --path .
-
-RUN cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo --config ../cargo.config.toml install trunk --version=0.16.0  && trunk build --release
 
 FROM nginx
 
