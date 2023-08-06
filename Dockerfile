@@ -13,6 +13,8 @@ RUN set -x && \
     PATH=$PATH:/nodejs/bin && \
     npm i tailwindcss -g
 
+RUN tailwindcss info
+
 ENV RUSTUP_DIST_SERVER="https://rsproxy.cn"
 
 ENV RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
