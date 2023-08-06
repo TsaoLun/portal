@@ -17,11 +17,9 @@ ENV RUSTUP_DIST_SERVER="https://rsproxy.cn"
 
 ENV RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
 
-RUN echo "[source.crates-io]\nreplace-with = 'rsproxy'\n\n[source.rsproxy]\nregistry = 'https://rsproxy.cn/crates.io-index'\n[source.rsproxy-sparse]\nregistry = 'sparse+https://rsproxy.cn/index/'\n\n[registries.rsproxy]\nindex = 'https://rsproxy.cn/crates.io-index'\n\n[net]\ngit-fetch-with-cli = true" > /usr/local/cargo/confi
+RUN cd /usr/src/portal/server && cargo --config ../cargo.config.toml install --path .
 
-RUN cd /usr/src/portal/server && cargo install --path .
-
-RUN cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo install trunk --version=0.16.0  && trunk build --release
+RUN cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo --config ../cargo.config.toml install trunk --version=0.16.0  && trunk build --release
 
 FROM nginx
 
