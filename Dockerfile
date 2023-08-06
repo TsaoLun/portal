@@ -20,7 +20,6 @@ RUN set -x && \
     cd /usr/src/portal/client && \ 
     rustup target add wasm32-unknown-unknown && \
     cargo --config ../cargo.config.toml install trunk --version=0.16.0  && \
-    rustup target add wasm32-unknown-unknown && \
     trunk build --release
 
 RUN cd /usr/src/portal/server && cargo --config ../cargo.config.toml install --path .
