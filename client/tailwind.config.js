@@ -1,5 +1,5 @@
 module.exports = {
-  content: ["./dist/**/*.{html,js,rs}", "./index.html", "../client/dist/**/*.{html,js,rs}"],
+  content: ["./src/**/*.{html,js,rs}", "./index.html", "../client/src/**/*.{html,js,rs}"],
   presets: [],
   darkMode: 'class', // or 'class'
   theme: {
