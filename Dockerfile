@@ -4,17 +4,24 @@ WORKDIR /usr/src/portal
 
 COPY . .
 
-RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+RUN set -x && \
+    NODEJS_VERSION=v16.17.0 && \
+    curl -O -L https://registry.npmmirror.com/-/binary/node/latest-v16.x/node-$NODEJS_VERSION-linux-x64.tar.gz && \
+    tar zxf node-$NODEJS_VERSION-linux-x64.tar.gz && \
+    rm node-$NODEJS_VERSION-linux-x64.tar.gz && \
+    mv node-$NODEJS_VERSION-linux-x64/ /nodejs && \
+    PATH=$PATH:/nodejs/bin && \
+    npm i tailwindcss -g
 
-RUN sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+ENV RUSTUP_DIST_SERVER="https://rsproxy.cn"
 
-RUN curl -sL https://mirrors.ustc.edu.cn/nodesource/deb/setup_18.x | bash
+ENV RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
 
-RUN apt-get update && apt-get install -y nodejs && npm i tailwindcss -g
+RUN echo "[source.crates-io]\nreplace-with = 'rsproxy'\n\n[source.rsproxy]\nregistry = 'https://rsproxy.cn/crates.io-index'\n[source.rsproxy-sparse]\nregistry = 'sparse+https://rsproxy.cn/index/'\n\n[registries.rsproxy]\nindex = 'https://rsproxy.cn/crates.io-index'\n\n[net]\ngit-fetch-with-cli = true" > /usr/local/cargo/confi
 
 RUN cd /usr/src/portal/server && cargo install --path .
 
-RUN cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo install trunk  && trunk build --release
+RUN cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo install trunk --version=0.16.0  && trunk build --release
 
 FROM nginx
 
