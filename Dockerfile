@@ -11,9 +11,9 @@ RUN set -x && \
     rm node-$NODEJS_VERSION-linux-x64.tar.gz && \
     mv node-$NODEJS_VERSION-linux-x64/ /nodejs && \
     PATH=$PATH:/nodejs/bin && \
-    npm i tailwindcss -g
-
-RUN tailwindcss info
+    npm install --registry=https://registry.npmmirror.com && \
+    npm i tailwindcss -g && \
+    tailwindcss info
 
 ENV RUSTUP_DIST_SERVER="https://rsproxy.cn"
 
