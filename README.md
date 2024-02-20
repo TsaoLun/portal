@@ -4,7 +4,7 @@
 
 项目使用 [Dioxus](https://dioxuslabs.com/) 作为 UI 框架、[Trunk](https://trunkrs.dev/) 作为前端构建工具，并有多个语言及框架的后端版本（比如 **Rust** 的 [Actix](https://actix.rs/) 及 **Go** 的 [Fiber](https://gofiber.io/)）。本项目选择使用 GraphQL 作为接口协议，并推荐使用 Docker 运行本项目，其中包含一个 Nginx 服务与后端服务（总共所需资源很小，在 Actix 后端环境中的运行内存约 8MB 左右）
 
-![](docs/stats.png)
+![资源占用](docs/stats.png)
 
 **Docker 快速搭建方式**
 
@@ -28,6 +28,6 @@
 
 5. 在 client 目录下执行 `trunk serve` 运行前端部分。
 
-![](docs/input.png)
+![输入内容](docs/input.png)
 
-![](docs/copy.png)
+![复制内容](docs/copy.png)
