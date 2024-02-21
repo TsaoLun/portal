@@ -42,4 +42,4 @@ COPY client/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 8080/tcp
 
-ENTRYPOINT sh -c "service nginx start;portal-server"
+ENTRYPOINT sh -c "service nginx start && portal-server"
