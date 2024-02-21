@@ -1,4 +1,4 @@
-# Dioxus + Rust-Actix/Go-Fiber 的粘贴板网站 Portal
+# Dioxus + GraphQL + Rust-Actix/Go-Fiber 的粘贴板网站 Portal
 
 本项目实现了一个可以快速启动并部署的 **WASM** 粘贴板网站，通过浏览器在多个平台实现文本内容的复制粘贴功能（主要解决我个人使用 Ubuntu 遇到的各种不方便）。
 
@@ -31,3 +31,19 @@
 ![输入内容](docs/input.png)
 
 ![复制内容](docs/copy.png)
+
+**库与工具**
+
+1. [**Rover**](https://github.com/apollographql/rover) - Rust 编写的 GraphQL CLI 工具，用于获取、整合 GraphQL Schema。
+
+2. [**Async-GraphQL**](https://github.com/async-graphql/async-graphql) - Rust 编写的 GraphQL 库 (Code-First)，用于实现后端 GraphQL 服务。
+
+3. [**GQLGEN**](https://github.com/99designs/gqlgen) - Go 编写的 GraphQL 代码生成工具 (Schema-First)，用于生成 Go 语言的 GraphQL 服务。
+
+4. [**Trunk**](https://trunkrs.dev/) - Rust 编写的 WASM 构建工具，用于构建前端项目。
+
+5. [**Dioxus**](https://dioxuslabs.com/) - Rust 编写的 UI 框架，用于构建前端项目。
+
+6. [**Fiber**](https://gofiber.io/) - Go 编写的 Web 框架，用于构建后端项目。
+
+7. [**Actix**](https://actix.rs/) - Rust 编写的 Web 框架，用于构建后端项目。

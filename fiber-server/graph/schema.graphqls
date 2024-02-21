@@ -1,0 +1,15 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+type Mutation {
+  set(data: String!): Boolean!
+}
+type Query {
+  get: String!
+  login(username: String!, password: String!): TokenResponse!
+}
+type TokenResponse {
+  ok: Boolean!
+  token: String
+}
