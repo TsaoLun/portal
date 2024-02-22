@@ -1,26 +1,26 @@
+mod middlewares;
 mod storage;
 use std::env;
 
 use crate::storage::*;
 use actix_cors::Cors;
-use actix_web::{
-    guard, http::header::HeaderMap, web, web::Data, App, HttpRequest, HttpResponse, HttpServer,
-    Result,
-};
+use actix_web::{guard, web, web::Data, App, HttpRequest, HttpResponse, HttpServer, Result};
 use async_graphql::*;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
 use dotenv::dotenv;
 use lazy_static::lazy_static;
-use storage::Token;
+use middlewares::get_token_from_headers;
 
 lazy_static! {
     pub static ref SERVER_URL: String = init_url();
 }
+
 fn init_url() -> String {
     env::var("SERVER_URL")
         .unwrap_or("0.0.0.0:8008".to_string())
         .replace("http://", "")
 }
+
 async fn index(
     schema: web::Data<DataSchema>,
     req: HttpRequest,
@@ -84,15 +84,4 @@ async fn main() -> std::io::Result<()> {
     .bind(SERVER_URL.to_string())?
     .run()
     .await
-}
-
-fn get_token_from_headers(headers: &HeaderMap) -> Option<Token> {
-    headers.get("Authorization").and_then(|value| {
-        value
-            .to_str()
-            .map(|s| Token {
-                token: s.to_string().replace("Bearer ", ""),
-            })
-            .ok()
-    })
 }

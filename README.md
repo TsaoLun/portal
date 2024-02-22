@@ -16,6 +16,14 @@
 
 4. 多设备访问服务器 8080 端口，进行数据快速复制。
 
+**推荐在项目目录使用 Makefile 命令**
+
+1. 设置 JWT_KEY 和用户密码：创建 .env 文件，内容为： `PORTAL_JWT_KEY={任意JWT_KEY} PORTAL_USERNAME={你的用户名} PORTAL_PASSWORD={你的密码}`。
+
+2. make actix / make fiber 构建对应版本的 Docker 镜像。
+
+3. make run 运行 Docker 镜像 / make stop 停止 Docker 镜像 / make logs 查看 Docker 镜像日志。
+
 **开发环境**
 
 1. 设置 JWT_KEY 和用户密码：项目目录下创建 .env 文件，内容为： `PORTAL_JWT_KEY={任意JWT_KEY} PORTAL_USERNAME={你的用户名} PORTAL_PASSWORD={你的密码}`。

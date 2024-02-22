@@ -3,34 +3,21 @@ use async_graphql::{
 };
 use chrono::Utc;
 use futures_util::lock::Mutex;
-use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
-use serde::{Deserialize, Serialize};
+use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use std::{env, sync::Arc};
 
 pub type DataSchema = Schema<Query, Mutation, EmptySubscription>;
 use slab::Slab;
+
+use crate::middlewares::{Claims, TokenGuard, EXP};
 pub struct Query;
 
 pub type Storage = Arc<Mutex<Slab<String>>>;
 
-const EXP: i64 = 7 * 24 * 60 * 60;
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Token {
-    pub token: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct Claims {
-    user: String,
-    exp: i64,
-    iat: i64,
-}
-
 #[Object]
 impl Query {
+    #[graphql(guard = "TokenGuard")]
     async fn get(&self, ctx: &Context<'_>) -> FieldResult<String> {
-        validate(ctx)?;
         let data = ctx.data_unchecked::<Storage>().lock().await;
         if data.is_empty() {
             Ok("".to_string())
@@ -83,8 +70,8 @@ pub struct Mutation;
 
 #[Object]
 impl Mutation {
+    #[graphql(guard = "TokenGuard")]
     async fn set(&self, ctx: &Context<'_>, data: String) -> FieldResult<bool> {
-        validate(ctx)?;
         if data.is_empty() {
             return Err(FieldError::from("请输入有效内容!"))
                 .map_err(|err| err.extend_with(|_, e| e.set("code", "INVALID_INPUT")));
@@ -109,26 +96,5 @@ impl TokenResponse {
     }
     async fn token(&self) -> Option<String> {
         self.token.clone()
-    }
-}
-
-fn validate(ctx: &Context<'_>) -> Result<(), FieldError> {
-    let token = ctx.data_opt::<Token>();
-    if let Some(token) = token {
-        match decode::<Claims>(
-            &token.token,
-            &DecodingKey::from_secret(env::var("PORTAL_JWT_KEY").unwrap().as_bytes()),
-            &Validation::new(Algorithm::HS512),
-        ) {
-            Ok(_e) => Ok(()),
-            Err(e) => {
-                println!("{:?}", e);
-                Err(FieldError::from("登录过期，请重新登陆!"))
-                    .map_err(|err| err.extend_with(|_, e| e.set("code", "EXPIRED_TOKEN")))
-            }
-        }
-    } else {
-        Err(FieldError::from("无效 Token"))
-            .map_err(|err| err.extend_with(|_, e| e.set("code", "INVALID_TOKEN")))
     }
 }
