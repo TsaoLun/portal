@@ -4,13 +4,15 @@ WORKDIR /usr/src/portal
 
 COPY . .
 
-RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
-
-RUN sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
-
-RUN curl -sL https://mirrors.ustc.edu.cn/nodesource/deb/setup_18.x | bash
-
-RUN apt-get update && apt-get install -y nodejs && npm i tailwindcss -g
+RUN set -x && \
+    NODEJS_VERSION=v16.17.0 && \
+    curl -O -L https://registry.npmmirror.com/-/binary/node/latest-v16.x/node-$NODEJS_VERSION-linux-x64.tar.gz && \
+    tar zxf node-$NODEJS_VERSION-linux-x64.tar.gz && \
+    rm node-$NODEJS_VERSION-linux-x64.tar.gz && \
+    mv node-$NODEJS_VERSION-linux-x64/ /nodejs && \
+    PATH=$PATH:/nodejs/bin && \
+    npm config set registry https://registry.npmmirror.com && \
+    npm i tailwindcss -g
 
 RUN cd /usr/src/portal/actix-server && cargo install --path .
 
