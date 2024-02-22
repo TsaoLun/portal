@@ -1,5 +1,5 @@
 use actix_web::http::header::HeaderMap;
-use async_graphql::{Context, Error, FieldError, Guard, Result};
+use async_graphql::{Context, ErrorExtensions, FieldError, Guard, Result};
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use std::env;
@@ -31,11 +31,13 @@ impl Guard for TokenGuard {
                 Ok(_e) => Ok(()),
                 Err(e) => {
                     println!("{:?}", e);
-                    Err(Error::from("登录过期，请重新登陆!"))
+                    Err(FieldError::from("登录过期，请重新登陆!"))
+                        .map_err(|err| err.extend_with(|_, e| e.set("code", "EXPIRED_TOKEN")))
                 }
             }
         } else {
-            Err(Error::from("未登录，请先登录!"))
+            Err(FieldError::from("无效 Token"))
+                .map_err(|err| err.extend_with(|_, e| e.set("code", "INVALID_TOKEN")))
         }
     }
 }
