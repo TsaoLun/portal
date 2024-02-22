@@ -12,11 +12,12 @@ RUN set -x && \
     mv node-$NODEJS_VERSION-linux-x64/ /nodejs && \
     PATH=$PATH:/nodejs/bin && \
     npm config set registry https://registry.npmmirror.com && \
-    npm i tailwindcss -g
+    npm i tailwindcss -g && \
+    # build client
+    cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo install trunk --version 0.16.0 && trunk build --release
+
 
 RUN cd /usr/src/portal/actix-server && cargo install --path .
-
-RUN cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo install trunk --version 0.16.0 && trunk build --release
 
 FROM nginx
 
