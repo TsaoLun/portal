@@ -16,12 +16,20 @@ import (
 
 // Set is the resolver for the set field.
 func (r *mutationResolver) Set(ctx context.Context, data string) (bool, error) {
-	panic(fmt.Errorf("not implemented: Set - set"))
+	if data == "" {
+		return false, fmt.Errorf("data is empty")
+	}
+	utils.Set("0", data)
+	return true, nil
 }
 
 // Get is the resolver for the get field.
 func (r *queryResolver) Get(ctx context.Context) (string, error) {
-	panic(fmt.Errorf("not implemented: Get - get"))
+	v, ok := utils.Get("0")
+	if !ok {
+		return "", fmt.Errorf("data not found")
+	}
+	return v, nil
 }
 
 // Login is the resolver for the login field.
