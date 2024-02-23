@@ -14,7 +14,7 @@ func main() {
 
 	app := fiber.New()
 	app.All("/", adaptor.HTTPHandlerFunc(playground.Handler("GraphQL playground", "/query")))
-	app.All("/query", adaptor.HTTPHandler(srv))
+	app.All("/graphql", adaptor.HTTPHandler(srv))
 
 	app.Listen(":8008")
 }

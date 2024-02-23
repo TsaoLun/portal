@@ -25,10 +25,6 @@ RUN set -x && \
     PATH=$PATH:/nodejs/bin && \
     npm config set registry https://registry.npmmirror.com && \
     npm i tailwindcss -g && \
-    CARGO_HOME=/usr/src/portal/cargo_home && \
-    mkdir -p $CARGO_HOME && \
-    echo "[source.crates-io]\nreplace-with = 'ustc'\n[source.ustc]\nregistry = 'git://mirrors.ustc.edu.cn/crates.io-index'" > $CARGO_HOME/config && \
-    export CARGO_HOME && \
     # build client
     cd /usr/src/portal/client && rustup target add wasm32-unknown-unknown && cargo install trunk --version 0.16.0 && trunk build --release
 
