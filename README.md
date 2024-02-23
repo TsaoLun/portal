@@ -36,6 +36,8 @@
 
 5. 在 client 目录下执行 `trunk serve` 运行前端部分。
 
+> 若 trunk serve 运行失败，且不需要修改前端代码，可以直接运行 make dev 单独运行前端部分。
+
 ![输入内容](docs/input.png)
 
 ![复制内容](docs/copy.png)
