@@ -6,55 +6,26 @@ package graph
 
 import (
 	"context"
-	"fmt"
-	"log"
-	"os"
 
+	"github.com/TsaoLun/portal/fiber-server/auth"
 	"github.com/TsaoLun/portal/fiber-server/graph/model"
-	"github.com/TsaoLun/portal/fiber-server/utils"
+	"github.com/TsaoLun/portal/fiber-server/logics"
 )
 
 // Set is the resolver for the set field.
 func (r *mutationResolver) Set(ctx context.Context, data string) (bool, error) {
-	if data == "" {
-		return false, fmt.Errorf("data is empty")
-	}
-	utils.Set("0", data)
-	return true, nil
+	return auth.WrapWithArgs(ctx, logics.Set, data)
 }
 
 // Get is the resolver for the get field.
 func (r *queryResolver) Get(ctx context.Context) (string, error) {
-	v, ok := utils.Get("0")
-	if !ok {
-		return "", fmt.Errorf("data not found")
-	}
-	return v, nil
+	return auth.WrapWithoutArgs(ctx, logics.Get)
 }
 
 // Login is the resolver for the login field.
 func (r *queryResolver) Login(ctx context.Context, username string, password string) (*model.TokenResponse, error) {
-	// read from env
-	u := os.Getenv("PORTAL_USERNAME")
-	p := os.Getenv("PORTAL_PASSWORD")
-	jwtKey := os.Getenv("PORTAL_JWT_KEY")
-	if !(username == u && password == p) || jwtKey == "" {
-		log.Printf("Invalid username or password from %s\n", username)
-		return &model.TokenResponse{
-			Token: nil,
-			Ok:    false,
-		}, nil
-	}
-	// generate token
-	token, err := utils.GenerateToken(jwtKey, username, utils.WEEK_MINUTES)
-	if err != nil {
-		return nil, err
-	}
-	return &model.TokenResponse{
-		Token: &token,
-		Ok:    true,
-	}, nil
-
+	// return auth.WrapWithArgs(ctx, logics.Login, logics.LoginArgs{Username: username, Password: password})
+	return logics.Login(ctx, logics.LoginArgs{Username: username, Password: password})
 }
 
 // Mutation returns MutationResolver implementation.
