@@ -2,7 +2,7 @@
 
 本项目实现了一个可以快速启动并部署的 **WASM** 粘贴板网站，通过浏览器在多个平台实现文本内容的复制粘贴功能（主要解决我个人使用 Ubuntu 遇到的各种不方便）。
 
-项目使用 [Dioxus](https://dioxuslabs.com/) 作为 UI 框架、[Trunk](https://trunkrs.dev/) 作为前端构建工具，并有多个语言及框架的后端版本（比如 **Rust** 的 [Actix](https://actix.rs/) 及 **Go** 的 [Fiber](https://gofiber.io/)）。本项目选择使用 GraphQL 作为接口协议，并推荐使用 Docker 运行本项目，其中包含一个 Nginx 服务与后端服务（总共所需资源很小，在 Actix 后端环境中的运行内存约 8MB 左右）
+项目使用 [Dioxus](https://dioxuslabs.com/) 作为 UI 框架、[Trunk](https://trunkrs.dev/) 作为前端构建工具，并有多个语言及框架的后端版本（比如 **Rust** 的 [Actix](https://actix.rs/) 及 **Go** 的 [Fiber](https://gofiber.io/)）。本项目选择使用 GraphQL 作为接口协议，并推荐使用 Docker 运行本项目，其中包含一个 Nginx 服务与后端服务（总共所需资源很小，在 Actix 后端环境中的运行内存约 5-8MB）
 
 ![资源占用](docs/stats.png)
 
